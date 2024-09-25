@@ -1,0 +1,44 @@
+function getBrandData($data){
+        // return $data;
+        $brand_data = base64_decode($data);
+        
+        $brand_id_data = DB :: table('tbl_brands')->where('b_id','=',)->first();
+    }
+ 
+
+*****fselect - 514
+
+else if(selectedDropdownId == 'cv_name'){
+
+
+            var brandData = selected;
+            var bUrl = $('#bUrl').val();
+            $.ajax({
+                url:bUrl+'/'+brandData,
+                type: "GET",
+                data:"",
+                success: function(data){
+                    console.log(data);
+                }
+
+            });
+        }
+
+*****add_brand_cv
+<div class="mb-3 predecessorHolder">
+                            <input type="hidden" id="bUrl" value="{{ url('get-brand-data') }}">
+                            <label for="cv_name" class="col-form-label">Name: <span class="text-asterisk">*</span></label>
+                            <div class="input-group predecessorHolder">
+                                <select class="card_inputs brand_dd dropdownDownArrow" id="cv_name" name="cv_name">
+                                    <option value="0" class="hide">Select Brand</option>
+                                    @foreach ($brand_data as $item)
+                                    <option value="{{ base64_encode($item->brand_name.'|'.$item->b_id) }}"> {{ $item->brand_name }} </option>
+                                    @endforeach
+                                </select>
+                                <span class="text-danger">@error('cv_name') {{ $message }} @enderror</span>
+                            </div>
+                            <div>
+                                <span>Or</span>
+                                <span onclick="openPopup('request_brand')" style="cursor:pointer; text-decoration: underline; color: var(--sr_themecolor);">Request Brand</span>
+                            </div>
+                        </div>

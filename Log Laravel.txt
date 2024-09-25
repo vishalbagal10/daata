@@ -1,0 +1,3 @@
+Log
+--> Log is basically used for we can say for debugging purpose
+--> used to basicaaly for understand what result is return after any action is performed 

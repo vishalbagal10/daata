@@ -1,0 +1,24 @@
+command to create new project
+	--> composer create-project --prefer-dist laravel/laravel project_name "^8.0"
+
+
+command to create controller
+	-->  php artisan make:controller <ControllerName>
+
+command to create migrations
+	--> php artisan make:migration create_employees_table
+Migrate
+	--> php artisan migrate:fresh
+
+
+--> Inside <tbl_user_roles> their is information about <admin> & <client> 
+
+$request->session()->put('LoggedUser', $user->uid);
+                        $request->session()->put('LoggedUserType', $user->role_id);
+
+composer require laravel/ui
+
+php artisan ui:auth
+
+
+composer require laravel/passport --ignore-platform-reqs

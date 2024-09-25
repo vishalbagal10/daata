@@ -1,0 +1,28 @@
+*** ipconfig --> to get my ip
+
+fl - flot left
+fm - flot flot middle
+fr - flot right
+
+*** first thing to remember that in js it it very imp to look what we find and look its id or class carefully
+
+*** for iniatizilation to declare fselect in particular section
+   but it very iportant to decalre the function outside for inisalization it for first time
+
+
+*** folder name madhe space dyyaacha nhi , _ use kela tri chalto
+*** date --> 19_june_2024 ya format madhe dyaychi new folder karaycha asel tr
+
+*** if we want to any
+
+ ***    <option value="{{ $item->sub_industry_id }}" class="{{ $item->parent_industry_id }}"> {{ $item->sub_industry_name }} </option>
+	--> VALUE --> VALUE STORE IN DATABASE AND OPtion name display on page
+
+
+
+*** blur() ->The function is executed when the form field loses focus:
+*** focus() -> The function is executed when the form field gets focus:
+
+*** The on() method attaches one or more event handlers for the selected elements.
+
+**** location.href.indexOf("/add-cv/") > -1 ---> greater than -1 asel tr to tya url madhe present asto

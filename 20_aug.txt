@@ -1,0 +1,2 @@
+javascript is lightweighted laungauge
+--> it means js can run without any compiler or we can execute js code on browser 

@@ -1,0 +1,26 @@
+* Flow OF Sonic Radar Project
+   1) Login
+	--> LoginController -- lgoinForm -- view(backend.views.login_form)
+	--> view(backend.views.login_form) through this content of this page is shared to backend.layouts.auth_layout-- after that lolgin page is diaplayed
+	--> after that all login page info is route to the {{route('checklogin')}}
+	--> thorugh thiis {{route('checklogin')}} it passed to LoginController -- authenticateLgoin
+
+   2) Snapshot management
+	--> CvsController- listBrandCvs -- take $cv_year data and pass to the views(brand_cv_list) --
+
+
+
+LoggedUserType == 1 --> admin
+LoggedUserType == 2 --> client
+
+'is_active', 0 --> acessible
+'is_active', 1 --> not acessible
+
+where('status', 1) --> published data
+where('status', 0) --> Unpublished data
+
+admin all access to create client account but password is set by the user itself
+
+
+
+

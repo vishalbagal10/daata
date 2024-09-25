@@ -1,0 +1,2389 @@
+@extends('backend.layouts.bodycontent')
+
+@section('title','Edit Brand Sonic Snapshot')
+
+@section('content')
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper cust_box" id="custLoader">
+  <!-- Content Header (Page header) -->
+  <div class="content-header">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0 text-dark">Edit Brand Sonic Radar</h1>
+        </div>
+        @if($graph_status!='')
+          {{-- <div class="col-sm-6 text-right">
+            <span class="btn btn-primary" onclick="openPopup('modal_create_archive')">Create Archive / Snapshot</span>
+            <div class="modal fade hide" id="modal_create_archive" style="display: block; padding-right: 17px;" aria-modal="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h4 class="modal-title">Create Archive / Snapshot</h4>
+                    <button onclick="closePopup('modal_create_archive')" type="button" class="close" data-dismiss="modal" aria-label="Close">
+                      <span aria-hidden="true">×</span>
+                    </button>
+                  </div>
+                  <div class="modal-body">
+                    <form action="{{config('app.url')}}/create-archive" method="post" enctype="multipart/form-data">
+                      @csrf
+                      <div class="form-group">
+                        <label for="cv_name" class="col-form-label" style="text-align: left; display: block;">Name:</label>
+                        <input type="text" class="card_inputs" id="cv_name" name="cv_name" placeholder="Sonic Radar Name" value="{{ $cv_data->cv_name }} {{ $cv_data->cv_year }}" maxlength="255" onclick="limitChecker('custInput', 'cv_name')" onchange="limitChecker('custInput', 'cv_name')" onblur="limitChecker('custInput', 'cv_name')" onfocus="limitChecker('custInput', 'cv_name')" />
+                        <input type="hidden" class="card_inputs" id="cv_id" name="cv_id" value="{{base64_encode($cv_data->cv_id)}}"/>
+                      </div>
+                      <div class="text-right">
+                          <button class="btn btn-primary" type="submit" onClick="addLoader()">Create</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+                <!-- /.modal-content -->
+              </div>
+              <!-- /.modal-dialog -->
+            </div>
+          </div> --}}
+        @endif
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </div>
+    <!-- /.container-fluid -->
+  </div>
+  <!-- /.content-header -->
+
+  <!-- Main content -->
+  <section class="content">
+  <div class="container-fluid">
+    <!-- Info boxes -->
+    <div class="row">
+      <div class="col-md-12"><span class="mandatoryFields" style="margin-bottom:0px;">All the fields marked <span class="text-asterisk">*</span> are compulsory</span></div>
+      <div class="col-md-12 data-capture-form">
+      {{--
+      <form action="#" method="post">
+      --}}
+      <input type="hidden" value="{{ url('smdata') }}" id="smUrl">
+      <input type="hidden" id="mtUrl" name="mtUrl" value="{{url('get-music-taste-cv')}}">
+      <input type="hidden" id="adimlUrl" name="adimlUrl" value="{{url('get-qualitative-name')}}">
+      <input type="hidden" id="mtuoaUrl" name="mtuoaUrl" value="{{url('get-experience-name')}}">
+      <input type="hidden" id="suiaUrl" name="suiaUrl" value="{{url('get-industry-avg')}}">
+      <input type="hidden" id="mepvUrl" name="mepvUrl" value="{{url('get-music-expenditure-per-video-avg')}}">
+      <input type="hidden" id="mepyUrl" name="mepyUrl" value="{{url('get-music-expenditure-per-year-avg')}}">
+      <input type="hidden" id="msoaUrl" name="msoaUrl" value="{{url('get-money-spent-on-audio-avg')}}">
+      <input type="hidden" id="pieChartSec78BgColor" value="{{implode(",",config('custom.pie_chartsec78_bg_color'))}}">
+      <form action="{{route('update.brandcv')}}" method="post" enctype="multipart/form-data">
+        @csrf
+        <input type="hidden" name="cv_type" id="cv_type" value="{{$cv_data->type}}">
+        <input type="hidden" name="cv_id" id="cv_id" value="{{$cv_data->cv_id}}">
+        @if(Session::get('success'))
+        <div class="alert alert-success"> {{ Session::get('success') }} </div>
+        @endif
+        @if(Session::get('fail'))
+        <div class="alert alert-danger"> {{ Session::get('fail') }} </div>
+        @endif
+        <div class="box-group" id="accordion">
+          <!-- tab 01 -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse1" data-toggle="collapse" id="lnkCollapse1">Section 1 - Sonic Radar Name</a> </h4>
+              <span class="validate-mark hide"></span> </div>
+              <div class="panel-collapse collapse show" id="collapse1" data-parent="#accordion">
+                <div class="card-body">
+                  <div class="row">
+                      <div class="col-md-6">
+                        <div class="mb-3 predecessorHolder">
+                            <input type="hidden" id="bUrl" value="{{ url('get-brand-data') }}">
+                            <label for="cv_name" class="col-form-label">Name: <span class="text-asterisk">*</span></label>
+                            <div class="input-group predecessorHolder c1name hide">
+                                <select class="card_inputs brand_dd" id="cv_name" name="cv_name" style="pointer-events: none;">
+                                    <option value="0" class="hide">Select Brand</option>
+                                    @foreach ($brand_data as $item)
+                                    <option value="{{ base64_encode($item->brand_name.'|'.$item->brand_id) }}" {{ ($item->brand_id == $cv_data->brand_id) ? 'selected' : '' }}> {{ $item->brand_name }} </option>
+                                    @endforeach
+                                </select>
+                                <span class="text-danger">@error('cv_name') {{ $message }} @enderror</span>
+                                @if($parent_cv != null)
+                                <input type="hidden" id="parentCvYear" value="{{$parent_cv->cv_year}}">
+                              @else
+                                <input type="hidden" id="parentCvYear" value="">
+                              @endif
+                            </div>
+                            <div class="input-group" id="new_cv_name">
+                                <input type="text" class="card_inputs" name="temp_cv_name" id="temp_cv_name" value="{{ $cv_data->cv_name }}" disabled>
+                                <button type="button" class="btn btn-primary" onclick="linkWithTaxonomy()">Link With Taxonomy</button>
+                            </div>
+                          </div>
+                        {{-- <div class="mb-3">
+                          <label for="cv_name" class="col-form-label">Name: <span class="text-asterisk">*</span></label>
+                          <div class="input-group">
+                            <input type="text" class="card_inputs" id="cv_name" name="cv_name" placeholder="Sonic Radar Name" value="{{ $cv_data->cv_name }}" maxlength="255" onclick="limitChecker('custInput', 'cv_name')" onchange="limitChecker('custInput', 'cv_name')" onblur="limitChecker('custInput', 'cv_name')" onfocus="limitChecker('custInput', 'cv_name')" />
+                            <span class="text-danger">@error('cv_name') {{ $message }} @enderror</span>
+                            @if($parent_cv != null)
+                              <input type="hidden" id="parentCvYear" value="{{$parent_cv->cv_year}}">
+                            @else
+                              <input type="hidden" id="parentCvYear" value="">
+                            @endif
+                          </div>
+                        </div> --}}
+
+                        <div class="mb-3">
+                          <label for="cv_date" class="col-form-label">Date: <span class="text-asterisk">*</span> (MM-YYYY)</label>
+                          <div class="input-group date" data-provide="datepicker" id="datepickerSonicCVDate">
+                            <input type="text" class="form-control-datepicker card_inputs" id="cv_date" name="cv_date" onchange="" onblur="" value="{{ $cv_data->cv_date }}" readonly/>
+                            <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                            <span class="text-danger">@error('cv_date') {{ $message }} @enderror</span>
+                          </div>
+                        </div>
+
+                        <div class="mb-3">
+                          <label for="industry_name" class="col-form-label">Industry Name: <span class="text-asterisk">*</span></label>
+                          <div class="input-group">
+                          <select class="card_inputs dropdownDownArrow" id="industry_name" name="industry_name" style="pointer-events: none;">
+                            <option value="0">Select Industry</option>
+                            @foreach ($industry_data as $item)
+                            <option value="{{ $item->industry_id }}" {{ ( $item->industry_id  ==  $cv_data->industry_id ) ? 'selected' : '' }}> {{ $item->industry_name }} </option>
+                            @endforeach
+                          </select>
+                          <input type="hidden" id="old_industry_name" name="old_industry_name" value="{{ $cv_data->industry_id }}">
+                          <span class="text-danger">@error('industry_name') {{ $message }} @enderror</span>
+                          </div>
+                        </div>
+
+                        <div class="mb-3">
+                          <label for="sub_industry_name" class="col-form-label">Sub Industry Name:</label>
+                          <div class="input-group">
+                          <select class="card_inputs dropdownDownArrow" id="sub_industry_name" name="sub_industry_name" style="pointer-events: none;" {{ (!in_array($cv_data->industry_id,$sub_ind_parent_ids)) ? 'disabled' : ''}}>
+                            <option value="0">Select Sub Industry</option>
+                            @foreach ($sub_industry_data as $item)
+                            <option value="{{ $item->sub_industry_id }}" {{ ( $item->sub_industry_id  ==  $cv_data->sub_industry_id ) ? 'selected' : '' }} class="{{ $item->parent_industry_id }} {{ ( $item->parent_industry_id  !=  $cv_data->industry_id ) ? 'hide' : '' }}"> {{ $item->sub_industry_name }} </option>
+                            @endforeach
+                          </select>
+                          <input type="hidden" id="old_sub_industry_name" name="old_sub_industry_name" value="{{ $cv_data->sub_industry_id }}">
+                          <span class="text-danger">@error('sub_industry_name') {{ $message }} @enderror</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6 mobile_cv_logo_mtop">
+                        <label for="cv_logo" class="col-form-label">Logo Image: <span class="text-asterisk">*</span></label>
+                        <input type="hidden" id="img_base_url" value="{{ config('custom.brand_img_url') }}">
+                        <div class="input-group">
+                            <div class="div-musicTMimg-holder cv_logo_cust cv_logo cvBrand_logo_cust">
+                                <div class="mtop10"> @if($cv_data->cv_logo != '' && $cv_data->cv_logo != null)<img src="{{ URL::to('http://localhost:7474/taxonomy/public/images/brand_images/')}}/{{ $cv_data->cv_logo }}?bi=@php echo microtime(); @endphp" id="cv_logo_preview" alt="" class="previewImg"> @else <img src="{{url('public/images/no-image.jpg')}}" alt="" class="noImg"> <img src="" alt="" class="previewImg"> @endif</div>
+                            </div>
+                            <input type="hidden" id="cv_logo" name="cv_logo" value="{{ $cv_data->cv_logo }}">
+                        </div>
+                    </div>
+
+
+                      {{-- <div class="col-md-6 mobile_cv_logo_mtop">
+                        <label for="cv_logo" class="col-form-label">Logo Image: <span class="text-asterisk">*</span></label>
+                        <input type="hidden" id="img_base_url" value="{{config('custom.brand_img_url')}}">
+                        <div class="input-group">
+                          <div class="div-musicTMimg-holder cv_logo_cust cv_logo cvBrand_logo_cust">
+                             <img src="" alt="" class="noImg" id="img_url">
+                          </div>
+                          <input type="hidden" id="cv_logo" name="cv_logo" value="">
+                        </div>
+                      </div> --}}
+
+                      {{-- <div class="col-md-6 mobile_cv_logo_mtop">
+                        <label for="cv_logo" class="col-form-label">Logo: <span class="text-asterisk">*</span> <span class="short-info">(Require size 800 x 800px)</span></label>
+                        <div class="input-group">
+                          <div class="div-musicTMimg-holder cv_logo_cust cv_logo cvBrand_logo_cust">
+                            <label for="cv_logo" onchange="uploadcvLogo.cvLogo()">
+                            <div class="btn btn-info btn-file btn-sm"> <i class="fa fa-paperclip"></i> Upload
+                              <input type="file" id="cv_logo" name="cv_logo" value="{{ old('cv_logo') }}">
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="mtop10"> @if($cv_data->cv_logo != '' && $cv_data->cv_logo != null)<img src="{{URL::to('public/images/cv_logos/thumbnail')}}/{{ $cv_data->cv_logo }}?bi=@php echo microtime(); @endphp" id="cv_logo_preview" alt="" class="previewImg"> @else <img src="{{url('public/images/no-image.jpg')}}" alt="" class="noImg"> <img src="" alt="" class="previewImg"> @endif</div>
+                            </label>
+                          </div>
+                        </div>
+                        <span class="text-danger">@error('cv_logo') {{ $message }} @enderror</span>
+                      </div> --}}
+
+                       {{-- <div class="col-md-4 mobile_cv_logo_mtop">
+                        <label for="cv_banner_desktop" class="col-form-label">Banner for Desktop: <span class="text-asterisk">*</span><br/><span class="short-info">(Recommended size 1600 x 410px)</span></label>
+                        <div class="input-group">
+                          <div class="div-musicTMimg-holder cv_logo_cust cv_banner_desktop">
+                            <label for="cv_banner_desktop" onchange="uploadcvBannerDesktop.cvBannerDesktop()">
+                            <div class="btn btn-info btn-file btn-sm"> <i class="fa fa-paperclip"></i> Upload
+                              <input type="file" id="cv_banner_desktop" name="cv_banner_desktop" value="{{ old('cv_banner_desktop') }}">
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="mtop10"> @if($cv_data->cv_banner_desktop != '' && $cv_data->cv_banner_desktop != null)<img src="{{URL::to('public/images/cv_banners/desktop')}}/{{ $cv_data->cv_banner_desktop }}?bi=@php echo microtime(); @endphp" id="cv_banner_desktop_preview" alt="" class="previewImg"> @else <img src="{{url('public/images/no-image.jpg')}}" alt="" class="noImg"> <img src="" alt="" class="previewImg"> @endif</div>
+                            </label>
+                            <!--<span class="btn-sm btn-close btnClickmusicTMRemoveImg hide" onclick="uploadcvBannerDesktop.removecvBannerDesktop();"><img src="public/images/close.png" alt=""></span>-->
+                          </div>
+                        </div>
+                        <span class="text-danger">@error('cv_banner_desktop') {{ $message }} @enderror</span>
+                      </div>
+
+                      <div class="col-md-4 mobile_cv_logo_mtop">
+                        <label for="cv_banner_ipad" class="col-form-label">Banner for iPad: <span class="text-asterisk">*</span><br/><span class="short-info">(Recommended size 1024 x 262px)</span></label>
+                        <div class="input-group">
+                          <div class="div-musicTMimg-holder cv_logo_cust cv_banner_ipad">
+                            <label for="cv_banner_ipad" onchange="uploadcvBanneriPad.cvBanneriPad()">
+                            <div class="btn btn-info btn-file btn-sm"> <i class="fa fa-paperclip"></i> Upload
+                              <input type="file" id="cv_banner_ipad" name="cv_banner_ipad" value="{{ old('cv_banner_ipad') }}">
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="mtop10"> @if($cv_data->cv_banner_ipad != '' && $cv_data->cv_banner_ipad != null)<img src="{{URL::to('public/images/cv_banners/ipad')}}/{{ $cv_data->cv_banner_ipad }}?bi=@php echo microtime(); @endphp" id="cv_banner_ipad_preview" alt="" class="previewImg"> @else <img src="{{url('public/images/no-image.jpg')}}" alt="" class="noImg"> <img src="" alt="" class="previewImg"> @endif</div>
+                            </label>
+                            <!--<span class="btn-sm btn-close btnClickmusicTMRemoveImg hide" onclick="uploadcvBanneriPad.removecvBanneriPad();"><img src="public/images/close.png" alt=""></span>-->
+                          </div>
+                        </div>
+                        <span class="text-danger">@error('cv_banner_ipad') {{ $message }} @enderror</span>
+                      </div>
+
+                      <div class="col-md-4 mobile_cv_logo_mtop">
+                        <label for="cv_banner_mobile" class="col-form-label">Banner for Mobile: <span class="text-asterisk">*</span><br/><span class="short-info">(Recommended size 640 x 260px)</span></label>
+                        <div class="input-group">
+                          <div class="div-musicTMimg-holder cv_logo_cust cv_banner_mobile">
+                            <label for="cv_banner_mobile" onchange="uploadcvBannerMobile.cvBannerMobile()">
+                            <div class="btn btn-info btn-file btn-sm"> <i class="fa fa-paperclip"></i> Upload
+                              <input type="file" id="cv_banner_mobile" name="cv_banner_mobile" value="{{ old('cv_banner_mobile') }}">
+                            </div>
+                            <div class="clearfix"></div>
+                            <div class="mtop10"> @if($cv_data->cv_banner_mobile != '' && $cv_data->cv_banner_mobile != null)<img src="{{URL::to('public/images/cv_banners/mobile')}}/{{ $cv_data->cv_banner_mobile }}?bi=@php echo microtime(); @endphp" id="cv_banner_mobile_preview" alt="" class="previewImg"> @else <img src="{{url('public/images/no-image.jpg')}}" alt="" class="noImg"> <img src="" alt="" class="previewImg"> @endif</div>
+                            </label>
+                            <!--<span class="btn-sm btn-close btnClickmusicTMRemoveImg hide" onclick="uploadcvBannerMobile.removecvBannerMobile();"><img src="public/images/close.png" alt=""></span>-->
+                          </div>
+                        </div>
+                        <span class="text-danger">@error('cv_banner_mobile') {{ $message }} @enderror</span>
+                      </div> --}}
+                    <div class="clear"></div>
+                    <div class="col-md-12 text-right"> <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('1','2')">Next</a> </div>
+                  </div>
+                </div>
+                <div class="clear"></div>
+              </div>
+          </div>
+
+          <!-- tab 02 -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse2" data-toggle="collapse" id="lnkCollapse2">Section 2 - Best in Audio Brands Ranking</a> </h4>
+              <span class="validate-mark hide"></span>
+            </div>
+            <div class="panel-collapse collapse" id="collapse2" data-parent="#accordion">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-6">
+                    <label for="section_2_title" class="col-form-label">Section 2 Title: </label>
+                    <div class="input-group">
+                      <input type="hidden" id="section_2_id" name="section_2_id" value="@if($cv_block_2_data!=''){{$cv_block_2_data->id}}@else  @endif">
+                      <input type="text" class="card_inputs" id="section_2_title" name="section_2_title" value="Best in Audio Brands Ranking {{$cv_data->cv_year}}" maxlength="255" onclick="limitChecker('custSecInput', 'section_2_title')" onchange="limitChecker('custSecInput', 'section_2_title')" onblur="limitChecker('custSecInput', 'section_2_title')" onfocus="limitChecker('custSecInput', 'section_2_title')" disabled/>
+                      <span class="text-danger">@error('section_2_title') {{ $message }} @enderror</span>
+                    </div>
+                  </div>
+                  <div class="col-md-6 mobile_OverallRanking_mtop mb-4">
+                    <label for="ranking" class="col-form-label">Ranking: {{-- <span class="text-asterisk">*</span> --}}</label>
+                    <div class="input-group">
+                      <input type="text" class="card_inputs numberonly" id="ranking" name="ranking" placeholder="Enter ranking" value="@if($cv_block_2_data != ''){{$cv_block_2_data->sr_no}}@else {{ old('ranking') }} @endif" maxlength="5" disabled/>
+                      @if($parent_cv_overall_ranking != '')
+                        <input type="hidden" id="pRanking" value="{{$parent_cv_overall_ranking->sr_no}}">
+                      @else
+                        <input type="hidden" id="pRanking" value="">
+                      @endif
+                      <span class="text-danger">@error('ranking') {{ $message }} @enderror</span>
+                    </div>
+                  </div>
+                  <div class="clear"></div>
+                  <div class="col-md-12 text-right"> <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('2','3')">Next</a> </div>
+                </div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+
+          <!-- tab 03 -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse3" data-toggle="collapse" id="lnkCollapse3">Section 3 - Music Taste</a> </h4>
+              <span class="validate-mark hide"></span>
+            </div>
+            <div class="panel-collapse collapse" id="collapse3" data-parent="#accordion">
+              <div class="card-body">
+                <div class="row">
+                  @if($top_3_genre != null)
+                    <input type="hidden" id="top3Genre" value="{{implode(",",$top_3_genre)}}">
+                  @else
+                    <input type="hidden" id="top3Genre" value="">
+                  @endif
+
+                  <div class="col-md-12 text-right"> <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('3','4')">Next</a> </div>
+                </div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+
+          <!-- tab 04 -->
+          <div class="card aboutKeyFindingBlock">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse4" data-toggle="collapse" id="lnkCollapse4" onclick="aboutKeyFinding.showKeyFinding();">Section 4 - About Me</a> </h4>
+              <span class="validate-mark hide"></span>
+            </div>
+            <div class="panel-collapse collapse" id="collapse4" data-parent="#accordion">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-12 mb-2">
+                    <div class="abtHolder">
+                      <label for="section_4_title" class="col-form-label">Section 4 Title:</label>
+                      <div class="input-group">
+                        <input type="hidden" id="section_4_id" name="section_4_id" value="@if($cv_block_4_data!=''){{$cv_block_4_data->b4_id}}@else  @endif">
+                        <input class="form_control_inner" type="text" name="section_4_title" id="section_4_title" value="@if($cv_block_4_data!=''){{$cv_block_4_data->b4_title}}@else About Me @endif" maxlength="255" onClick="limitChecker('custSecInput', 'section_4_title')" onchange="limitChecker('custSecInput', 'section_4_title')" onblur="limitChecker('custSecInput', 'section_4_title')" onfocus="limitChecker('custSecInput', 'section_4_title')">
+                      </div>
+
+                      <div class="mt-3">
+                        <label for="about_description" class="col-form-label">Description:</label>
+                        <textarea class="txtara1" name="about_description" id="about_description" placeholder="Description" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">@if($cv_block_4_data!=''){{$cv_block_4_data->b4_description}}@else {{ old('about_description') }} @endif</textarea>
+                      </div>
+                      <div class="clearfix"></div>
+
+                      <div class="mt-3 aboutKeyFindingTextareaHolder">
+                        <label for="about_key_findings" class="col-form-label">Key Findings:</label>
+                        <textarea class="txtara1" name="about_key_findings" id="about_key_findings" placeholder="Key Findings" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">@if($cv_block_4_data!=''){{$cv_block_4_data->b4_key_findings}}@else {{ old('about_key_findings') }} @endif</textarea>
+                      </div>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="clearfix"></div>
+                  <div class="col-md-12 text-right"> <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('4','5')">Next</a> </div>
+                </div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+
+          <!-- tab 05 -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse5" data-toggle="collapse" id="lnkCollapse5">Section 5 - Most Popular Videos</a> </h4>
+              <span class="validate-mark hide"></span>
+            </div>
+            <div class="panel-collapse collapse" id="collapse5" data-parent="#accordion">
+              <div class="card-body">
+                {{-- <div class="row">
+                  <div class="col-md-12">
+                    <table class="table tbl_MostPopularVideos mb-2">
+                      <thead>
+                        <tr>
+                          <td>
+                            <div class="row">
+                              <div class="col-md-6 mb-3">
+                                <label for="section_9_title" class="col-form-label">Section 5 Title:</label>
+                                <input class="form_control_inner" type="text" name="section_9_title" id="section_9_title" value="@if($cv_block_9_data!=''){{ $cv_block_9_data[0]->b9_title }}@else Most Popular Videos @endif" maxlength="255" onClick="limitChecker('custSecInput', 'section_9_title')" onchange="limitChecker('custSecInput', 'section_9_title')" onblur="limitChecker('custSecInput', 'section_9_title')" onfocus="limitChecker('custSecInput', 'section_9_title')">
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </thead>
+                      <tbody id="mostPopularVideosTableBody">
+                        <!-- row -->
+                        @if($cv_block_9_data!='')
+                          @foreach($cv_block_9_data as $b9key => $b9item)
+                            <tr class="first" row-number="{{$b9key}}" id="tblRow_{{$b9key}}">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <label for="cv_most_popular_video_title_{{$b9key}}" class="col-form-label">Most Popular Video Title:</label>
+                                    <input type="text" class="card_inputs" name="cv_most_popular_video_title_{{$b9key}}" id="cv_most_popular_video_title_{{$b9key}}" value="{{ $b9item->b9_video_title }}" maxlength="255" onClick="limitChecker('custInput', 'cv_most_popular_video_title_{{$b9key}}')" onchange="limitChecker('custInput', 'cv_most_popular_video_title_{{$b9key}}')" onblur="limitChecker('custInput', 'cv_most_popular_video_title_{{$b9key}}')" onfocus="limitChecker('custInput', 'cv_most_popular_video_title_{{$b9key}}')">
+                                    <input class="video_id" type="hidden" id="cv_most_popular_video_id_{{$b9key}}" name="cv_most_popular_video_id_{{$b9key}}" value="{{ $b9item->b9_id }}">
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_most_popular_video_link_{{$b9key}}" class="col-form-label">Most Popular Video Embed Link:</label>
+                                    <textarea name="cv_most_popular_video_link_{{$b9key}}" id="cv_most_popular_video_link_{{$b9key}}" class="card_inputs">{{ $b9item->b9_video_link }}</textarea>
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                                @if($b9key == 0)
+                                  <div><a class="btn_addRow b9plus" onclick="funMostPopularVideo.createRow();"><i class="fa fa-plus"></i></a></div>
+                                @else
+                                  <div><a class="btn_addRow" onclick="funMostPopularVideo.deleteRows(this);" style="position: relative; top: 0px;"><i class="fa fa-times"></i></a></div>
+                                @endif
+                              </td>
+                            </tr>
+                          @endforeach
+                        @else
+                          <tr class="first" row-number="0" id="tblRow_0">
+                            <td>
+                              <div class="row">
+                                <div class="col-md-6 fl mb-3">
+                                  <label for="cv_most_popular_video_title_0" class="col-form-label">Most Popular Video Title:</label>
+                                  <input type="text" class="card_inputs" name="cv_most_popular_video_title_0" id="cv_most_popular_video_title_0" placeholder="Enter Most Popular Video Title" value="{{ old('cv_most_popular_video_title_0') }}" maxlength="255" onClick="limitChecker('custInput', 'cv_most_popular_video_title_0')" onchange="limitChecker('custInput', 'cv_most_popular_video_title_0')" onblur="limitChecker('custInput', 'cv_most_popular_video_title_0')" onfocus="limitChecker('custInput', 'cv_most_popular_video_title_0')">
+                                  <input class="video_id" type="hidden" id="cv_most_popular_video_id_0" name="cv_most_popular_video_id_0" value="">
+                                </div>
+                                <div class="col-md-6 fr mb-3">
+                                  <label for="cv_most_popular_video_link_0" class="col-form-label">Most Popular Video Embed Link:</label>
+                                  <textarea name="cv_most_popular_video_link_0" id="cv_most_popular_video_link_0" class="card_inputs" placeholder="Enter Most Popular Video Link">{{ old('cv_most_popular_video_link_0') }}</textarea>
+                                </div>
+                              </div>
+                            </td>
+                            <td style="text-align: right; width:38px;">
+                              <label>&nbsp;</label>
+                              <div><a class="btn_addRow b9plus" onclick="funMostPopularVideo.createRow();"><i class="fa fa-plus"></i></a></div>
+                            </td>
+                          </tr>
+                        @endif
+                      </tbody>
+                    </table>
+                    @if($cv_block_9_data!='')
+                      <input type="hidden" id="most_popular_video_count" name="most_popular_video_count" value="{{count($cv_block_9_data)}}">
+                    @else
+                      <input type="hidden" id="most_popular_video_count" name="most_popular_video_count" value="1">
+                    @endif
+                    <div class="clear"></div>
+                  </div>
+                </div> --}}
+                <div class="clear"></div>
+                <div class="text-right">
+                  <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('5','6')">Next</a>
+                </div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+
+          <!-- tab 06 -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse6" data-toggle="collapse" id="lnkCollapse6">Section 6 - Social Media Links</a> </h4>
+              <span class="validate-mark hide"></span>
+            </div>
+            <div class="panel-collapse collapse" id="collapse6" data-parent="#accordion">
+              <div class="card-body">
+                <div class="row">
+                  <div id="divSocialMediaDetails" class="divSocialMedia">
+                    <div class="col-md-8">
+                      <div class="form-group mtop10">
+                        <button id="btnAddSocialMedia" class="btn btn-primary btn-sm" type="button" onClick="showAddBox('brandcvwithoutnum', null, this, 'add')">Add</button>
+                        <button id="moveToTheTop" class="btn btn-primary btn-sm disabled" type="button">Move Top</button>
+                        <button id="moveUp" class="btn btn-primary btn-sm disabled" type="button" onClick="selTableRow.moveUp()">Move Up</button>
+                      </div>
+                      <div class="clear"></div>
+                      <table id="tblSocialMedia" class="table table-bordered mb-4">
+                        <thead>
+                          <tr>
+                            <th width="15%">Icon</th>
+                            <th width="35%">URL</th>
+                            <th width="30%">Name</th>
+                            <th width="20%">Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          @if($cv_block_5_data!='')
+                            @foreach ($cv_block_5_data as $b5key=>$b5item)
+                              @if($b5item->b5_icon_name != '' && $b5item->b5_icon_name != null)
+                                <tr id="smID_{{$b5key}}" smdId="{{$b5key}}">
+                                  <input type="hidden" name="smTrid_{{$b5key}}" id="smTrid_{{$b5key}}" value="{{$b5item->b5_id}}">
+                                  <td class="attrIcon" id="attrIcon_{{$b5key}}"><div class="shoplink-logo-holder"><input type="hidden" name="smTrIcon_{{$b5key}}" id="smTrIcon_{{$b5key}}" value="{{$b5item->b5_icon_name}}"> <img id="attriconimg_{{$b5key}}" src="{{URL::to('public/images/social_media_icons')}}/{{$b5item->b5_icon_name}}?mt=@php echo microtime(); @endphp" class="" alt="" style="width:100px" /> </div></td>
+                                  <td class="attrUrl" id="attrUrl_{{$b5key}}" url=""><div class="form-group"><input type="hidden" name="smTrUrl_{{$b5key}}" id="smTrUrl_{{$b5key}}" value="{{$b5item->b5_link}}"> <span id="urltxt_{{$b5key}}" class="wordbreak" style="display:inline-block;">{{$b5item->b5_link}}</span> </div></td>
+                                  <td class="attrName" id="attrName_{{$b5key}}"><div class="form-group"><input type="hidden" name="smTrName_{{$b5key}}" id="smTrName_{{$b5key}}" value="{{$b5item->b5_link_name}}"> <span id="nametxt_{{$b5key}}" class="wordbreak" style="display:inline-block;">{{$b5item->b5_link_name}}</span> </div></td>
+                                  <td>
+                                    <button class="btn btn-default btn-sm" onClick="removeSocialMedia(this,'brandcvwithoutnum')" type="button" index="{{$b5key}}">Delete</button>
+                                    <button class="btn btn-primary btn-sm" id="btnEditSocialMedia" type="button" onClick="showAddBox('brandcvwithoutnum',null,this,'edit')">Edit</button>
+                                  </td>
+                                </tr>
+                              @endif
+                            @endforeach
+                          @endif
+                        </tbody>
+                      </table>
+                      @if($cv_block_5_data!='')
+                        <input type="hidden" id="smDataCount" name="smDataCount" value="{{count($cv_block_5_data)}}">
+                      @else
+                        <input type="hidden" id="smDataCount" name="smDataCount" value="0">
+                      @endif
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="text-right"> <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('6','7')">Next</a> </div>
+                <div class="clear"></div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+
+          <!-- tab 07 -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse7" data-toggle="collapse" id="lnkCollapse7">Section 7 - Social Media Stats</a> </h4>
+              <span class="validate-mark hide"></span> </div>
+            <div class="panel-collapse collapse" id="collapse7" data-parent="#accordion">
+              <div class="card-body">
+                <div class="text-right"> <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('7','8')">Next</a> </div>
+                <div class="clear"></div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+
+          <!-- tab 08 -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse8" data-toggle="collapse" id="lnkCollapse8">Section 8 - YouTube Channel Sync Details</a> </h4>
+              <span class="validate-mark hide"></span> </div>
+              <div class="panel-collapse collapse" id="collapse8" data-parent="#accordion">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <table class="table tbl_MostPopularVideos mb-2">
+                        <tbody id="youTubeChannelTableBody">
+                          @if($cv_block_16_data !='')
+                            @foreach($cv_block_16_data as $b16key => $b16item)
+                              <!-- row -->
+                              <tr class="first" row-number="{{$b16key}}" id="tblRow_{{$b16key}}">
+                                <input class="chnID" type="hidden" id="ychn_id_{{$b16key}}" name="ychn_id_{{$b16key}}" value="{{$b16item->b16_id}}">
+                                <td>
+                                  <div class="row">
+                                    <div class="col-md-3 fl mb-3">
+                                      <label for="ychn_name_{{$b16key}}" class="col-form-label">Channel Display Name:</label>
+                                      <input type="text" class="card_inputs video_id" name="ychn_name_{{$b16key}}" id="ychn_name_{{$b16key}}" placeholder="YouTube Channel Display Name" value="{{$b16item->chn_name}}" maxlength="255" onClick="limitChecker('custInput', 'ychn_name_{{$b16key}}')" onchange="limitChecker('custInput', 'ychn_name_{{$b16key}}')" onblur="limitChecker('custInput', 'ychn_name_{{$b16key}}')" onfocus="limitChecker('custInput', 'ychn_name_{{$b16key}}')">
+                                    </div>
+
+                                    <div class="col-md-3 lang mb-3 predecessorHolder">
+                                        <label for="ychn_language_{{$b16key}}" class="col-form-label">Channel Language:</label>
+                                        <select class="card_inputs dropdownDownArrow language_dd" id="ychn_language_{{$b16key}}" name="ychn_language_{{$b16key}}" maxlength="255">
+                                          <option value="" class="hide">Select language</option>
+
+                                          @foreach ($country_lang_data as $country)
+                                            @if($country->country_code == $b16item->chn_lang)
+                                              <option value="{{base64_encode($country->country_code)}}" selected> {{ $country->country}}</option>
+                                            @else
+                                            <option value="{{base64_encode($country->country_code)}}"> {{ $country->country}}</option>
+                                            @endif
+                                          @endforeach
+
+                                        </select>
+                                      </div>
+
+                                    <div class="col-md-3 fm mb-3">
+                                      <label for="ychn_start_date_{{$b16key}}" class="col-form-label">Start Date: (MM-YYYY)</label>
+                                      <div class="input-group date" data-provide="datepicker" id="datepickerYChannelStartDate_{{$b16key}}">
+                                        <input type="text" class="form-control-datepicker card_inputs" id="ychn_start_date_{{$b16key}}" name="ychn_start_date_{{$b16key}}" onchange="" onblur="" placeholder="MM-YYYY" value="{{$b16item->start_month}}" readonly/>
+                                        <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                                        <span class="text-danger">@error('ychn_start_date_{{$b16key}}') {{ $message }} @enderror</span>
+                                      </div>
+                                    </div>
+                                    <div class="col-md-3 fr mb-3">
+                                      <label for="ychn_end_date_{{$b16key}}" class="col-form-label">End Date: (MM-YYYY)</label>
+                                      <div class="input-group date" data-provide="datepicker" id="datepickerYChannelEndDate_{{$b16key}}">
+                                        <input type="text" class="form-control-datepicker card_inputs" id="ychn_end_date_{{$b16key}}" name="ychn_end_date_{{$b16key}}" onchange="" onblur="" placeholder="MM-YYYY" value="{{$b16item->end_month}}" readonly/>
+                                        <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                                        <span class="text-danger">@error('ychn_end_date_{{$b16key}}') {{ $message }} @enderror</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td style="text-align: right; width:38px;">
+                                  <label>&nbsp;</label>
+                                  @if($b16key == 0)
+                                    <div><a class="btn_addRow b16plus" onclick="funYouTubeChannel.createRow();"><i class="fa fa-plus"></i></a></div>
+                                  @else
+                                    <div><a class="btn_addRow" onclick="funYouTubeChannel.deleteRows(this);" style="position: relative; top: 0px;"><i class="fa fa-times"></i></a></div>
+                                  @endif
+                                </td>
+                              </tr>
+                            @endforeach
+                          @else
+                            <tr class="first" row-number="0" id="tblRow_0">
+                              <input class="chnID" type="hidden" id="ychn_id_0" name="ychn_id_0" value="">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-3 fl mb-3">
+                                    <label for="ychn_name_0" class="col-form-label">Channel Display Name:</label>
+                                    <input type="text" class="card_inputs video_id" name="ychn_name_0" id="ychn_name_0" placeholder="YouTube Channel Display Name" value="{{ old('ychn_name_0') }}" maxlength="255" onClick="limitChecker('custInput', 'ychn_name_0')" onchange="limitChecker('custInput', 'ychn_name_0')" onblur="limitChecker('custInput', 'ychn_name_0')" onfocus="limitChecker('custInput', 'ychn_name_0')">
+                                    {{-- <input class="video_id" type="hidden" id="ychn_name_0" name="ychn_name_0" value=""> --}}
+                                  </div>
+                                  <div class="col-md-3 lang mb-3 predecessorHolder">
+                                    <label for="ychn_language_0" class="col-form-label">Channel Language:</label>
+                                    <select class="card_inputs dropdownDownArrow language_dd" id="ychn_language_0" name="ychn_language_0" maxlength="255">
+                                      <option value="" class="hide">Select language</option>
+
+                                      @foreach ($country_lang_data as $country)
+                                          <option value="{{base64_encode($country->country_code)}}"> {{ $country->country}}</option>
+                                      @endforeach
+
+                                    </select>
+                                  </div>
+                                  <div class="col-md-3 fm mb-3">
+                                    <label for="ychn_start_date_0" class="col-form-label">Start Date: (MM-YYYY)</label>
+                                    <div class="input-group date" data-provide="datepicker" id="datepickerYChannelStartDate_0">
+                                      <input type="text" class="form-control-datepicker card_inputs" id="ychn_start_date_0" name="ychn_start_date_0" onchange="" onblur="" placeholder="MM-YYYY" value="{{ old('ychn_start_date_0') }}" readonly/>
+                                      <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                                      <span class="text-danger">@error('ychn_start_date_0') {{ $message }} @enderror</span>
+                                    </div>
+                                    {{-- <input class="video_id" type="hidden" id="ychn_start_date_0" name="ychn_start_date_0" value=""> --}}
+                                  </div>
+                                  <div class="col-md-3 fr mb-3">
+                                    <label for="ychn_end_date_0" class="col-form-label">End Date: (MM-YYYY)</label>
+                                    <div class="input-group date" data-provide="datepicker" id="datepickerYChannelEndDate_0">
+                                      <input type="text" class="form-control-datepicker card_inputs" id="ychn_end_date_0" name="ychn_end_date_0" onchange="" onblur="" placeholder="MM-YYYY" value="{{ old('ychn_end_date_0') }}" readonly/>
+                                      <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                                      <span class="text-danger">@error('ychn_end_date_0') {{ $message }} @enderror</span>
+                                    </div>
+                                    {{-- <input class="video_id" type="hidden" id="ychn_end_date_0" name="ychn_end_date_0" value=""> --}}
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                                <div><a class="btn_addRow b16plus" onclick="funYouTubeChannel.createRow();"><i class="fa fa-plus"></i></a></div>
+                              </td>
+                            </tr>
+                          @endif
+                        </tbody>
+                      </table>
+                      @if($cv_block_16_data !='')
+                        <input type="hidden" id="ychn_count" name="ychn_count" value="{{count($cv_block_16_data)}}">
+                      @else
+                        <input type="hidden" id="ychn_count" name="ychn_count" value="1">
+                      @endif
+                      <div class="clear"></div>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('8','9')">Next</a>
+                  </div>
+                </div>
+                <div class="clear"></div>
+              </div>
+          </div>
+
+          <!-- tab 09 -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse9" data-toggle="collapse" id="lnkCollapse9">Section 9 - Instagram Channel Sync Details</a> </h4>
+              <span class="validate-mark hide"></span> </div>
+              <div class="panel-collapse collapse" id="collapse9" data-parent="#accordion">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <table class="table tbl_MostPopularVideos mb-2">
+                        <tbody id="instagramChannelTableBody">
+                          @if($cv_block_17_data !='')
+                            @foreach($cv_block_17_data as $b17key => $b17item)
+                              <!-- row -->
+                              <tr class="first" row-number="{{$b17key}}" id="tblRow_{{$b17key}}">
+                                <input class="chnID" type="hidden" id="ichn_id_{{$b17key}}" name="ichn_id_{{$b17key}}" value="{{$b17item->b17_id}}">
+                                <td>
+                                  <div class="row">
+                                    <div class="col-md-3 fl mb-3">
+                                      <label for="ichn_name_{{$b17key}}" class="col-form-label">Channel Display Name:</label>
+                                      <input type="text" class="card_inputs video_id" name="ichn_name_{{$b17key}}" id="ichn_name_{{$b17key}}" placeholder="Instagram Channel Display Name" value="{{$b17item->chn_name}}" maxlength="255" onClick="limitChecker('custInput', 'ichn_name_{{$b17key}}')" onchange="limitChecker('custInput', 'ichn_name_{{$b17key}}')" onblur="limitChecker('custInput', 'ichn_name_{{$b17key}}')" onfocus="limitChecker('custInput', 'ichn_name_{{$b17key}}')">
+                                    </div>
+
+                                    <div class="col-md-3 lang mb-3 predecessorHolder">
+                                        <label for="ichn_language_{{$b17key}}" class="col-form-label">Channel Language:</label>
+                                        <select class="card_inputs dropdownDownArrow language_dd" id="ichn_language_{{$b17key}}" name="ichn_language_{{$b17key}}" maxlength="255">
+                                          <option value="" class="hide">Select language</option>
+
+                                          @foreach ($country_lang_data as $country)
+                                            @if($country->country_code == $b17item->chn_lang)
+                                              <option value="{{base64_encode($country->country_code)}}" selected> {{ $country->country}}</option>
+                                            @else
+                                            <option value="{{base64_encode($country->country_code)}}"> {{ $country->country}}</option>
+                                            @endif
+                                          @endforeach
+
+                                        </select>
+                                      </div>
+
+                                    <div class="col-md-3 fm mb-3">
+                                      <label for="ichn_start_date_{{$b17key}}" class="col-form-label">Start Date: (MM-YYYY)</label>
+                                      <div class="input-group date" data-provide="datepicker" id="datepickerIChannelStartDate_{{$b17key}}">
+                                        <input type="text" class="form-control-datepicker card_inputs" id="ichn_start_date_{{$b17key}}" name="ichn_start_date_{{$b17key}}" onchange="" onblur="" placeholder="MM-YYYY" value="{{$b17item->start_month}}" readonly/>
+                                        <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                                        <span class="text-danger">@error('ichn_start_date_{{$b17key}}') {{ $message }} @enderror</span>
+                                      </div>
+                                    </div>
+                                    <div class="col-md-3 fr mb-3">
+                                      <label for="ichn_end_date_{{$b17key}}" class="col-form-label">End Date: (MM-YYYY)</label>
+                                      <div class="input-group date" data-provide="datepicker" id="datepickerIChannelEndDate_{{$b17key}}">
+                                        <input type="text" class="form-control-datepicker card_inputs" id="ichn_end_date_{{$b17key}}" name="ichn_end_date_{{$b17key}}" onchange="" onblur="" placeholder="MM-YYYY" value="{{$b17item->end_month}}" readonly/>
+                                        <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                                        <span class="text-danger">@error('ichn_end_date_{{$b17key}}') {{ $message }} @enderror</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td style="text-align: right; width:38px;">
+                                  <label>&nbsp;</label>
+                                  @if($b17key == 0)
+                                    <div><a class="btn_addRow b17plus" onclick="funInstagramChannel.createRow();"><i class="fa fa-plus"></i></a></div>
+                                  @else
+                                    <div><a class="btn_addRow" onclick="funInstagramChannel.deleteRows(this);" style="position: relative; top: 0px;"><i class="fa fa-times"></i></a></div>
+                                  @endif
+                                </td>
+                              </tr>
+                            @endforeach
+                          @else
+                            <tr class="first" row-number="0" id="tblRow_0">
+                              <input class="chnID" type="hidden" id="ichn_id_0" name="ichn_id_0" value="">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-3 fl mb-3">
+                                    <label for="ichn_name_0" class="col-form-label">Channel Display Name:</label>
+                                    <input type="text" class="card_inputs video_id" name="ichn_name_0" id="ichn_name_0" placeholder="Instagram Channel Display Name" value="{{ old('ichn_name_0') }}" maxlength="255" onClick="limitChecker('custInput', 'ichn_name_0')" onchange="limitChecker('custInput', 'ichn_name_0')" onblur="limitChecker('custInput', 'ichn_name_0')" onfocus="limitChecker('custInput', 'ichn_name_0')">
+                                  </div>
+                                  <div class="col-md-3 lang mb-3 predecessorHolder">
+                                    <label for="ichn_language_0" class="col-form-label">Channel Language:</label>
+                                    <select class="card_inputs dropdownDownArrow language_dd" id="ichn_language_0" name="ichn_language_0" maxlength="255">
+                                      <option value="" class="hide">Select language</option>
+
+                                      @foreach ($country_lang_data as $country)
+                                          <option value="{{base64_encode($country->country_code)}}"> {{ $country->country}}</option>
+                                      @endforeach
+
+                                    </select>
+                                  </div>
+                                  <div class="col-md-3 fm mb-3">
+                                    <label for="ichn_start_date_0" class="col-form-label">Start Date: (MM-YYYY)</label>
+                                    <div class="input-group date" data-provide="datepicker" id="datepickerIChannelStartDate_0">
+                                      <input type="text" class="form-control-datepicker card_inputs" id="ichn_start_date_0" name="ichn_start_date_0" onchange="" onblur="" placeholder="MM-YYYY" value="{{ old('ichn_start_date_0') }}" readonly/>
+                                      <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                                      <span class="text-danger">@error('ichn_start_date_0') {{ $message }} @enderror</span>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-3 fr mb-3">
+                                    <label for="ichn_end_date_0" class="col-form-label">End Date: (MM-YYYY)</label>
+                                    <div class="input-group date" data-provide="datepicker" id="datepickerIChannelEndDate_0">
+                                      <input type="text" class="form-control-datepicker card_inputs" id="ichn_end_date_0" name="ichn_end_date_0" onchange="" onblur="" placeholder="MM-YYYY" value="{{ old('ichn_end_date_0') }}" readonly/>
+                                      <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                                      <span class="text-danger">@error('ichn_end_date_0') {{ $message }} @enderror</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                                <div><a class="btn_addRow b17plus" onclick="funInstagramChannel.createRow();"><i class="fa fa-plus"></i></a></div>
+                              </td>
+                            </tr>
+                          @endif
+                        </tbody>
+                      </table>
+                      @if($cv_block_17_data !='')
+                        <input type="hidden" id="ichn_count" name="ichn_count" value="{{count($cv_block_17_data)}}">
+                      @else
+                        <input type="hidden" id="ichn_count" name="ichn_count" value="1">
+                      @endif
+                      <div class="clear"></div>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('9','10')">Next</a>
+                  </div>
+                </div>
+                <div class="clear"></div>
+              </div>
+          </div>
+
+          <!-- tab 10 -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse10" data-toggle="collapse" id="lnkCollapse10">Section 10 - TikTok Channel Sync Details</a> </h4>
+              <span class="validate-mark hide"></span> </div>
+              <div class="panel-collapse collapse" id="collapse10" data-parent="#accordion">
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <table class="table tbl_MostPopularVideos mb-2">
+                        <tbody id="tiktokChannelTableBody">
+                          @if($cv_block_18_data !='')
+                            @foreach($cv_block_18_data as $b18key => $b18item)
+                              <!-- row -->
+                              <tr class="first" row-number="{{$b18key}}" id="tblRow_{{$b18key}}">
+                                <input class="chnID" type="hidden" id="tchn_id_{{$b18key}}" name="tchn_id_{{$b18key}}" value="{{$b18item->b18_id}}">
+                                <td>
+                                  <div class="row">
+                                    <div class="col-md-3 fl mb-3">
+                                      <label for="tchn_name_{{$b18key}}" class="col-form-label">Channel Display Name:</label>
+                                      <input type="text" class="card_inputs video_id" name="tchn_name_{{$b18key}}" id="tchn_name_{{$b18key}}" placeholder="TikTok Channel Display Name" value="{{$b18item->chn_name}}" maxlength="255" onClick="limitChecker('custInput', 'tchn_name_{{$b18key}}')" onchange="limitChecker('custInput', 'tchn_name_{{$b18key}}')" onblur="limitChecker('custInput', 'tchn_name_{{$b18key}}')" onfocus="limitChecker('custInput', 'tchn_name_{{$b18key}}')">
+                                    </div>
+                                    <div class="col-md-3 lang mb-3 predecessorHolder">
+                                        <label for="tchn_language_{{$b18key}}" class="col-form-label">Channel Language:</label>
+                                        <select class="card_inputs dropdownDownArrow language_dd" id="tchn_language_{{$b18key}}" name="tchn_language_{{$b18key}}" maxlength="255">
+                                          <option value="" class="hide">Select language</option>
+
+                                          @foreach ($country_lang_data as $country)
+                                            @if($country->country_code == $b18item->chn_lang)
+                                              <option value="{{base64_encode($country->country_code)}}" selected> {{ $country->country}}</option>
+                                            @else
+                                            <option value="{{base64_encode($country->country_code)}}"> {{ $country->country}}</option>
+                                            @endif
+                                          @endforeach
+
+                                        </select>
+                                      </div>
+                                    <div class="col-md-3 fm mb-3">
+                                      <label for="tchn_start_date_{{$b18key}}" class="col-form-label">Start Date: (MM-YYYY)</label>
+                                      <div class="input-group date" data-provide="datepicker" id="datepickerTChannelStartDate_{{$b18key}}">
+                                        <input type="text" class="form-control-datepicker card_inputs" id="tchn_start_date_{{$b18key}}" name="tchn_start_date_{{$b18key}}" onchange="" onblur="" placeholder="MM-YYYY" value="{{$b18item->start_month}}" readonly/>
+                                        <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                                        <span class="text-danger">@error('tchn_start_date_{{$b18key}}') {{ $message }} @enderror</span>
+                                      </div>
+                                    </div>
+                                    <div class="col-md-3 fr mb-3">
+                                      <label for="tchn_end_date_{{$b18key}}" class="col-form-label">End Date: (MM-YYYY)</label>
+                                      <div class="input-group date" data-provide="datepicker" id="datepickerTChannelEndDate_{{$b18key}}">
+                                        <input type="text" class="form-control-datepicker card_inputs" id="tchn_end_date_{{$b18key}}" name="tchn_end_date_{{$b18key}}" onchange="" onblur="" placeholder="MM-YYYY" value="{{$b18item->end_month}}" readonly/>
+                                        <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                                        <span class="text-danger">@error('tchn_end_date_{{$b18key}}') {{ $message }} @enderror</span>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </td>
+                                <td style="text-align: right; width:38px;">
+                                  <label>&nbsp;</label>
+                                  @if($b18key == 0)
+                                    <div><a class="btn_addRow b18plus" onclick="funTikTokChannel.createRow();"><i class="fa fa-plus"></i></a></div>
+                                  @else
+                                    <div><a class="btn_addRow" onclick="funTikTokChannel.deleteRows(this);" style="position: relative; top: 0px;"><i class="fa fa-times"></i></a></div>
+                                  @endif
+                                </td>
+                              </tr>
+                            @endforeach
+                          @else
+                            <tr class="first" row-number="0" id="tblRow_0">
+                              <input class="chnID" type="hidden" id="tchn_id_0" name="tchn_id_0" value="">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-3 fl mb-3">
+                                    <label for="tchn_name_0" class="col-form-label">Channel Display Name:</label>
+                                    <input type="text" class="card_inputs video_id" name="tchn_name_0" id="tchn_name_0" placeholder="TikTok Channel Display Name" value="{{ old('tchn_name_0') }}" maxlength="255" onClick="limitChecker('custInput', 'tchn_name_0')" onchange="limitChecker('custInput', 'tchn_name_0')" onblur="limitChecker('custInput', 'tchn_name_0')" onfocus="limitChecker('custInput', 'tchn_name_0')">
+                                  </div>
+                                  <div class="col-md-3 lang mb-3 predecessorHolder">
+                                    <label for="tchn_language_0" class="col-form-label">Channel Language:</label>
+                                    <select class="card_inputs dropdownDownArrow language_dd" id="tchn_language_0" name="tchn_language_0" maxlength="255">
+                                      <option value="" class="hide">Select language</option>
+
+                                      @foreach ($country_lang_data as $country)
+                                          <option value="{{base64_encode($country->country_code)}}"> {{ $country->country}}</option>
+                                      @endforeach
+
+                                    </select>
+                                  </div>
+
+                                  <div class="col-md-3 fm mb-3">
+                                    <label for="tchn_start_date_0" class="col-form-label">Start Date: (MM-YYYY)</label>
+                                    <div class="input-group date" data-provide="datepicker" id="datepickerTChannelStartDate_0">
+                                      <input type="text" class="form-control-datepicker card_inputs" id="tchn_start_date_0" name="tchn_start_date_0" onchange="" onblur="" placeholder="MM-YYYY" value="{{ old('tchn_start_date_0') }}" readonly/>
+                                      <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                                      <span class="text-danger">@error('tchn_start_date_0') {{ $message }} @enderror</span>
+                                    </div>
+                                  </div>
+                                  <div class="col-md-3 fr mb-3">
+                                    <label for="tchn_end_date_0" class="col-form-label">End Date: (MM-YYYY)</label>
+                                    <div class="input-group date" data-provide="datepicker" id="datepickerTChannelEndDate_0">
+                                      <input type="text" class="form-control-datepicker card_inputs" id="tchn_end_date_0" name="tchn_end_date_0" onchange="" onblur="" placeholder="MM-YYYY" value="{{ old('tchn_end_date_0') }}" readonly/>
+                                      <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                                      <span class="text-danger">@error('tchn_end_date_0') {{ $message }} @enderror</span>
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                                <div><a class="btn_addRow b18plus" onclick="funTikTokChannel.createRow();"><i class="fa fa-plus"></i></a></div>
+                              </td>
+                            </tr>
+                          @endif
+                        </tbody>
+                      </table>
+                      @if($cv_block_18_data !='')
+                        <input type="hidden" id="tchn_count" name="tchn_count" value="{{count($cv_block_18_data)}}">
+                      @else
+                        <input type="hidden" id="tchn_count" name="tchn_count" value="1">
+                      @endif
+                      <div class="clear"></div>
+                    </div>
+                  </div>
+                  <div class="text-right">
+                    <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('10','11')">Next</a>
+                  </div>
+                </div>
+                <div class="clear"></div>
+              </div>
+          </div>
+
+          {{-- <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse10" data-toggle="collapse" id="lnkCollapse10">Section 10 - A Day In My Life</a> </h4>
+              <span class="validate-mark hide"></span>
+            </div>
+            <div class="panel-collapse collapse" id="collapse10" data-parent="#accordion">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-12">
+                    <table class="table tbl_aDayInMyLife mb-2">
+                      <thead>
+                        <tr>
+                          <td>
+                            <div class="row">
+                              <div class="col-md-6 mb-3">
+                                <label for="section_10_title" class="col-form-label">Section 10 Title:</label>
+                                <input type="hidden" id="sec10DatasetsBgColorNames" value="{{implode(",",config('custom.datasets10_bg_color_array'))}}">
+                                <div class="input-group">
+                                  <input type="text" id="section_10_title" name="section_10_title" class="card_inputs" value="@if($cv_block_10_data!=''){{ $cv_block_10_data[0]->b10_title }}@else A Day In My Life @endif" maxlength="255" onclick="limitChecker('custSecInput', 'section_10_title')" onchange="limitChecker('custSecInput', 'section_10_title')" onblur="limitChecker('custSecInput', 'section_10_title')" onfocus="limitChecker('custSecInput', 'section_10_title')" />
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                          <td></td>
+                        </tr>
+                      </thead>
+                      <tbody id="aDayInMyLifeTableBody">
+                        <!-- row -->
+                        @if($cv_block_10_data!='')
+                          @foreach($cv_block_10_data as $b10key => $b10item)
+                            <tr class="first" row-number="{{$b10key}}" id="tblRow_{{$b10key}}">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="life_id" type="hidden" id="cv_a_day_in_my_life_id_{{$b10key}}" name="cv_a_day_in_my_life_id_{{$b10key}}" value="{{$b10item->b10_id}}">
+                                    <label for="cv_a_day_in_my_life_name_id_{{$b10key}}" class="col-form-label">Legend Name:</label>
+                                    <select class="card_inputs dropdownDownArrow" name="cv_a_day_in_my_life_name_id_{{$b10key}}" id="cv_a_day_in_my_life_name_id_{{$b10key}}">
+                                      <option value="0">Select Qualitative</option>
+                                      @foreach ($qualitative_data as $item)
+                                        <option value="{{ $item->qualitative_id }}" {{ ( $item->qualitative_id  ==  $b10item->b10_name_id ) ? 'selected' : '' }}> {{ $item->qualitative_name }} </option>
+                                      @endforeach
+                                    </select>
+                                    <input type="hidden" id="old_cv_a_day_in_my_life_name_id_{{$b10key}}" name="old_cv_a_day_in_my_life_name_id_{{$b10key}}" value="{{ $b10item->b10_name_id }}">
+                                  </div>
+                                  <div class="col-md-3 fr mb-3">
+                                    <label for="cv_a_day_in_my_life_number_{{$b10key}}" class="col-form-label">Legend Number:</label>
+                                    <input type="text" name="cv_a_day_in_my_life_number_{{$b10key}}" id="cv_a_day_in_my_life_number_{{$b10key}}" class="card_inputs numZeroToHundred" maxlength="3" value="{{$b10item->b10_number}}" />
+                                  </div>
+                                  <div class="col-md-3 lcolor_holder mb-3">
+                                    <label for="cv_a_day_in_my_life_color_{{$b10key}}" class="col-form-label">Legend Color:</label>
+                                    <input type="text" name="cv_a_day_in_my_life_color_{{$b10key}}" id="cv_a_day_in_my_life_color_{{$b10key}}" class="card_inputs colrpicker colorpicker-element" value="{{$b10item->b10_color}}" />
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                                @if($b10key == 0)
+                                    @if(count($cv_block_10_data) < 9)
+                                      <div><a class="btn_addRow b10plus" onclick="funaDayInMyLife.createRow();"><i class="fa fa-plus"></i></a></div>
+                                    @else
+                                      <div><a class="btn_addRow b10plus" style="cursor: not-allowed;"><i class="fa fa-plus"></i></a></div>
+                                    @endif
+                                @else
+                                <div><a class="btn_addRow" onclick="funaDayInMyLife.deleteRows(this);" style="position: relative; top: 0px;"><i class="fa fa-times"></i></a></div>
+                                @endif
+                              </td>
+                            </tr>
+                          @endforeach
+                        @else
+                          <tr class="first" row-number="0" id="tblRow_0">
+                            <td>
+                              <div class="row">
+                                <div class="col-md-6 fl mb-3">
+                                  <input class="life_id" type="hidden" id="cv_a_day_in_my_life_id_0" name="cv_a_day_in_my_life_id_0" value="">
+                                  <label for="cv_a_day_in_my_life_name_id_0" class="col-form-label">Legend Name:</label>
+                                  <select class="card_inputs dropdownDownArrow" name="cv_a_day_in_my_life_name_id_0" id="cv_a_day_in_my_life_name_id_0">
+                                    <option value="0">Select Qualitative</option>
+                                    @foreach ($qualitative_data as $item)
+                                      <option value="{{ $item->qualitative_id }}"> {{ $item->qualitative_name }} </option>
+                                    @endforeach
+                                  </select>
+                                  <input type="hidden" id="old_cv_a_day_in_my_life_name_id_0" name="old_cv_a_day_in_my_life_name_id_0" value="">
+                                </div>
+                                <div class="col-md-3 fr mb-3">
+                                  <label for="cv_a_day_in_my_life_number_0" class="col-form-label">Legend Number:</label>
+                                  <input type="text" name="cv_a_day_in_my_life_number_0" id="cv_a_day_in_my_life_number_0" class="card_inputs numZeroToHundred" maxlength="3" placeholder="Number" value="{{ old('cv_a_day_in_my_life_number_0') }}" />
+                                </div>
+                                <div class="col-md-3 lcolor_holder mb-3">
+                                  <label for="cv_a_day_in_my_life_color_0" class="col-form-label">Legend Color:</label>
+                                  <input type="text" name="cv_a_day_in_my_life_color_0" id="cv_a_day_in_my_life_color_0" class="card_inputs colrpicker colorpicker-element" placeholder="Legend Color" value="{{ old('cv_a_day_in_my_life_color_0') }}" />
+                                </div>
+                              </div>
+                            </td>
+                            <td style="text-align: right; width:38px;">
+                              <label>&nbsp;</label>
+                              <div><a class="btn_addRow b10plus" onclick="funaDayInMyLife.createRow();"><i class="fa fa-plus"></i></a></div>
+                            </td>
+                          </tr>
+                        @endif
+                      </tbody>
+                    </table>
+                    @if($cv_block_10_data!='')
+                      <input type="hidden" id="a_day_in_my_life_count" name="a_day_in_my_life_count" value="{{count($cv_block_10_data)}}">
+                    @else
+                      <input type="hidden" id="a_day_in_my_life_count" name="a_day_in_my_life_count" value="1">
+                    @endif
+                    <div class="clear"></div>
+                  </div>
+                </div>
+                <div class="clear"></div>
+                <div class="text-right"> <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('10','11')">Next</a> </div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div> --}}
+
+          <!-- tab 11 -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse11" data-toggle="collapse" id="lnkCollapse11">Section 11 - Twitter Channel Sync Details</a> </h4>
+              <span class="validate-mark hide"></span> </div>
+              <div class="panel-collapse collapse" id="collapse11" data-parent="#accordion">
+                    <div class="card-body">
+                            <div class="row">
+                                @if($cv_block_19_data != "")
+                                    <div class="col-md-12">
+                                    <table class="table tbl_MostPopularVideos mb-2">
+                                        <tbody id="twitterChannelTableBody">
+                                        @if($cv_block_19_data !='')
+                                            @foreach($cv_block_19_data as $b19key => $b19item)
+                                            <!-- row -->
+                                            <tr class="first" row-number="{{$b19key}}" id="tblRow_{{$b19key}}">
+                                                <input class="chnID" type="hidden" id="twtchn_id_{{$b19key}}" name="twtchn_id_{{$b19key}}" value="{{$b19item->b19_id}}">
+                                                <td>
+                                                <div class="row">
+                                                    <div class="col-md-6 fl mb-3">
+                                                    <label for="twtchn_name_{{$b19key}}" class="col-form-label">Channel Display Name:</label>
+                                                    <input type="text" class="card_inputs video_id" name="twtchn_name_{{$b19key}}" id="twtchn_name_{{$b19key}}" placeholder="Twitter Channel Display Name" value="{{$b19item->chn_name}}" maxlength="255" onClick="limitChecker('custInput', 'twtchn_name_{{$b19key}}')" onchange="limitChecker('custInput', 'twtchn_name_{{$b19key}}')" onblur="limitChecker('custInput', 'twtchn_name_{{$b19key}}')" onfocus="limitChecker('custInput', 'twtchn_name_{{$b19key}}')">
+                                                    </div>
+                                                    <div class="col-md-3 fm mb-3">
+                                                    <label for="twtchn_start_date_{{$b19key}}" class="col-form-label">Start Date: (MM-YYYY)</label>
+                                                    <div class="input-group date" data-provide="datepicker" id="datepickerTWTChannelStartDate_{{$b19key}}">
+                                                        <input type="text" class="form-control-datepicker card_inputs" id="twtchn_start_date_{{$b19key}}" name="twtchn_start_date_{{$b19key}}" onchange="" onblur="" placeholder="MM-YYYY" value="{{$b19item->start_month}}" readonly/>
+                                                        <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                                                        <span class="text-danger">@error('twtchn_start_date_{{$b19key}}') {{ $message }} @enderror</span>
+                                                    </div>
+                                                    </div>
+                                                    <div class="col-md-3 fr mb-3">
+                                                    <label for="twtchn_end_date_{{$b19key}}" class="col-form-label">End Date: (MM-YYYY)</label>
+                                                    <div class="input-group date" data-provide="datepicker" id="datepickerTWTChannelEndDate_{{$b19key}}">
+                                                        <input type="text" class="form-control-datepicker card_inputs" id="twtchn_end_date_{{$b19key}}" name="twtchn_end_date_{{$b19key}}" onchange="" onblur="" placeholder="MM-YYYY" value="{{$b19item->end_month}}" readonly/>
+                                                        <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                                                        <span class="text-danger">@error('twtchn_end_date_{{$b19key}}') {{ $message }} @enderror</span>
+                                                    </div>
+                                                    </div>
+                                                </div>
+                                                </td>
+                                                <td style="text-align: right; width:38px;">
+                                                <label>&nbsp;</label>
+                                                @if($b19key == 0)
+                                                    <div><a class="btn_addRow b19plus" onclick="funTwitterChannel.createRow();"><i class="fa fa-plus"></i></a></div>
+                                                @else
+                                                    <div><a class="btn_addRow" onclick="funTwitterChannel.deleteRows(this);" style="position: relative; top: 0px;"><i class="fa fa-times"></i></a></div>
+                                                @endif
+                                                </td>
+                                            </tr>
+                                            @endforeach
+                                        @else
+                                            <tr class="first" row-number="0" id="tblRow_0">
+                                            <input class="chnID" type="hidden" id="twtchn_id_0" name="twtchn_id_0" value="">
+                                            <td>
+                                                <div class="row">
+                                                <div class="col-md-6 fl mb-3">
+                                                    <label for="twtchn_name_0" class="col-form-label">Channel Display Name:</label>
+                                                    <input type="text" class="card_inputs video_id" name="twtchn_name_0" id="twtchn_name_0" placeholder="Twitter Channel Display Name" value="{{ old('twtchn_name_0') }}" maxlength="255" onClick="limitChecker('custInput', 'twtchn_name_0')" onchange="limitChecker('custInput', 'twtchn_name_0')" onblur="limitChecker('custInput', 'twtchn_name_0')" onfocus="limitChecker('custInput', 'twtchn_name_0')">
+                                                </div>
+                                                <div class="col-md-3 fm mb-3">
+                                                    <label for="twtchn_start_date_0" class="col-form-label">Start Date: (MM-YYYY)</label>
+                                                    <div class="input-group date" data-provide="datepicker" id="datepickerTWTChannelStartDate_0">
+                                                    <input type="text" class="form-control-datepicker card_inputs" id="twtchn_start_date_0" name="twtchn_start_date_0" onchange="" onblur="" placeholder="MM-YYYY" value="{{ old('twtchn_start_date_0') }}" readonly/>
+                                                    <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                                                    <span class="text-danger">@error('twtchn_start_date_0') {{ $message }} @enderror</span>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-3 fr mb-3">
+                                                    <label for="twtchn_end_date_0" class="col-form-label">End Date: (MM-YYYY)</label>
+                                                    <div class="input-group date" data-provide="datepicker" id="datepickerTWTChannelEndDate_0">
+                                                    <input type="text" class="form-control-datepicker card_inputs" id="twtchn_end_date_0" name="twtchn_end_date_0" onchange="" onblur="" placeholder="MM-YYYY" value="{{ old('twtchn_end_date_0') }}" readonly/>
+                                                    <div class="input-group-addon input-group-addon-cust"> <span class="input-group-text input-group-text-cust"> <i class="far fa-calendar-alt"></i> </span> </div>
+                                                    <span class="text-danger">@error('twtchn_end_date_0') {{ $message }} @enderror</span>
+                                                    </div>
+                                                </div>
+                                                </div>
+                                            </td>
+                                            <td style="text-align: right; width:38px;">
+                                                <label>&nbsp;</label>
+                                                <div><a class="btn_addRow b19plus" onclick="funTwitterChannel.createRow();"><i class="fa fa-plus"></i></a></div>
+                                            </td>
+                                            </tr>
+                                        @endif
+                                        </tbody>
+                                    </table>
+                                    @if($cv_block_19_data !='')
+                                        <input type="hidden" id="twtchn_count" name="twtchn_count" value="{{count($cv_block_19_data)}}">
+                                    @else
+                                        <input type="hidden" id="twtchn_count" name="twtchn_count" value="1">
+                                    @endif
+                                    <div class="clear"></div>
+                                    </div>
+                                @endif
+                            </div>
+                        <div class="text-right">
+                            <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('11','12')">Next</a>
+                        </div>
+                    </div>
+                    <div class="clear"></div>
+              </div>
+          </div>
+
+          <!-- tab 12 -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse12" data-toggle="collapse" id="lnkCollapse12">Section 12 - Sonic Logo</a> </h4>
+              <span class="validate-mark hide"></span>
+            </div>
+            <div class="panel-collapse collapse" id="collapse12" data-parent="#accordion">
+              <div class="card-body">
+                <table class="table tbl_sonicLogo mb-2">
+                  <tbody id="sonicLogoTableBody">
+                    @if($cv_block_6_data!='')
+                      @foreach($cv_block_6_data as $b6key => $b6item)
+                        <tr class="first" row-number="{{$b6key}}" id="tblRow_{{$b6key}}">
+                          <td>
+                            <div class="row">
+                              <div class="col-md-6 fl mb-3">
+                                <label for="section_6_title_{{$b6key}}" class="col-form-label">Title:</label>
+                                <div class="input-group">
+                                  <input class="section_6_id" type="hidden" id="section_6_id_{{$b6key}}" name="section_6_id_{{$b6key}}" value="{{$b6item->	b6_id }}">
+                                  <input class="form_control_inner section_6_title" type="text" name="section_6_title_{{$b6key}}" id="section_6_title_{{$b6key}}" value="{{$b6item->b6_title}}" maxlength="255" onClick="limitChecker('custSecInput', 'section_6_title_{{$b6key}}')" onchange="limitChecker('custSecInput', 'section_6_title_{{$b6key}}')" onblur="limitChecker('custSecInput', 'section_6_title_{{$b6key}}')" onfocus="limitChecker('custSecInput', 'section_6_title_{{$b6key}}')">
+                                </div>
+                              </div>
+                              <div class="col-md-6 fr mb-4">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <label for="sonic_logo_audio_file_{{$b6key}}" class="col-form-label">Sonic Logo:</label>
+                                    @if($b6item->b6_name == '' && $b6item->b6_name == null)
+                                        <a class="btn_delRow" onclick="refreshAudioFile('sonic_logo_audio_file_{{$b6key}}', 'sonic_logo_file_audio_{{$b6key}}');" style="position: relative; top: 0px; margin: 0px;">
+                                            <i class="fa fa-times"></i>
+                                        </a>
+                                    @endif
+                                  </div>
+                                  <div class="input-group" style="position: relative; top: -3px;">
+                                {{-- <label for="cv_logo" class="col-form-label">Snapshot Logo: <span class="text-asterisk">*</span></label> --}}
+                                    <label for="sonic_logo_audio_file_{{$b6key}}" style="width: 100%;">
+                                      <div class="div-musicTMimg-holder sonic_logo_audio_file">
+                                        <div class="btn btn-info btn-file"> <i class="fa fa-paperclip"></i> Upload
+                                          <input type="file" id="sonic_logo_audio_file_{{$b6key}}" name="sonic_logo_audio_file_{{$b6key}}" onchange="soncLogoAudio('{{$b6key}}',event)" value="{{ $b6item->b6_name }}"/>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <div class="mtop10">
+                                          @if($b6item->b6_name != '' || $b6item->b6_name != null)
+                                            <audio id="sonic_logo_file_audio_{{$b6key}}" controls class="">
+                                              <source src="{{URL::to('public/audios/cv_audios')}}/{{ $b6item->b6_name }}" id="sonic_logo_file_audio_src_{{$b6key}}" />
+                                              <input type="hidden" id="old_sonic_logo_audio_file_{{$b6key}}" name="old_sonic_logo_audio_file_{{$b6key}}" value="{{ $b6item->b6_name }}" />
+                                            </audio>
+                                          @else
+                                            <audio id="sonic_logo_file_audio_{{$b6key}}" controls class="hide">
+                                              <source src="" id="sonic_logo_file_audio_src_{{$b6key}}" />
+                                            </audio>
+                                          @endif
+                                        </div>
+                                      </div>
+                                    </label>
+                                    <span class="text-danger">@error('sonic_logo_audio_file_{{$b6key}}') {{ $message }} @enderror</span>
+                                    <span id="sonic_logo_file_audio_error_{{$b6key}}" class="text-danger sonic_logo_file_audio_error hide">The sonic logo must be a file of type: mp3, wav, wma, aac, m4a.</span>
+                                  </div>
+                              </div>
+
+                              <div class="clearfix"></div>
+                            </div>
+                          </td>
+                          <td style="text-align: right; width:38px;">
+                            <label>&nbsp;</label>
+                            @if($b6key == 0)
+                              <div><a class="btn_addRow b6plus" onclick="funsonicLogo.createRow('edit');"><i class="fa fa-plus"></i></a></div>
+                            @else
+                              <div><a class="btn_addRow" onclick="funsonicLogo.deleteRows(this,'edit');" style="position: relative; top: 0px;"><i class="fa fa-times"></i></a></div>
+                            @endif
+                          </td>
+                        </tr>
+                      @endforeach
+                    @else
+                      <tr class="first" row-number="0" id="tblRow_0">
+                        <td>
+                          <div class="row">
+                            <div class="col-md-6 fl mb-3">
+                              <label for="section_6_title_0" class="col-form-label">Title:</label>
+                              <div class="input-group">
+                                <input class="section_6_id" type="hidden" id="section_6_id_0" name="section_6_id_0" value="">
+                                <input class="form_control_inner section_6_title" type="text" name="section_6_title_0" id="section_6_title_0" value="Sonic Logo" maxlength="255" onClick="limitChecker('custSecInput', 'section_6_title_0')" onchange="limitChecker('custSecInput', 'section_6_title_0')" onblur="limitChecker('custSecInput', 'section_6_title_0')" onfocus="limitChecker('custSecInput', 'section_6_title_0')">
+                              </div>
+                            </div>
+                            <div class="col-md-6 fr mb-4">
+                              {{-- <label for="cv_logo" class="col-form-label">Snapshot Logo: <span class="text-asterisk">*</span></label> --}}
+                              <div style="display: flex; justify-content: space-between;">
+                                <label for="sonic_logo_audio_file_0" class="col-form-label">Sonic Logo:</label>
+                                <a class="btn_delRow" onclick="refreshAudioFile('sonic_logo_audio_file_0', 'sonic_logo_file_audio_0');" style="position: relative; top: 0px; margin: 0px;">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                              </div>
+                              <div class="input-group" style="position: relative; top: -3px;">
+                                  <label for="sonic_logo_audio_file_0" style="width: 100%;">
+                                    <div class="div-musicTMimg-holder sonic_logo_audio_file">
+                                      <div class="btn btn-info btn-file"> <i class="fa fa-paperclip"></i> Upload
+                                        <input type="file" id="sonic_logo_audio_file_0" name="sonic_logo_audio_file_0" onchange="soncLogoAudio('0',event)" value="{{ old('sonic_logo_audio_file_0') }}"/>
+                                      </div>
+                                      <div class="clearfix"></div>
+                                      <div class="mtop10">
+                                        <audio id="sonic_logo_file_audio_0" controls class="hide">
+                                          <source src="" id="sonic_logo_file_audio_src_0" />
+                                        </audio>
+                                      </div>
+                                    </div>
+                                  </label>
+                                  <span class="text-danger">@error('sonic_logo_audio_file_0') {{ $message }} @enderror</span>
+                                  <span id="sonic_logo_file_audio_error_0" class="text-danger sonic_logo_file_audio_error hide">The sonic logo must be a file of type: mp3, wav, wma, aac, m4a.</span>
+                                </div>
+                            </div>
+
+                            <div class="clearfix"></div>
+                          </div>
+                        </td>
+                        <td style="text-align: right; width:38px;">
+                          <label>&nbsp;</label>
+                          <div><a class="btn_addRow b6plus" onclick="funsonicLogo.createRow();"><i class="fa fa-plus"></i></a></div>
+                        </td>
+                      </tr>
+                    @endif
+                  </tbody>
+                </table>
+                @if($cv_block_6_data!='')
+                  <input type="hidden" id="sonic_logo_count" name="sonic_logo_count" value="{{count($cv_block_6_data)}}">
+                @else
+                  <input type="hidden" id="sonic_logo_count" name="sonic_logo_count" value="1">
+                @endif
+                <div class="text-right"> <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('12','13')">Next</a> </div>
+                <div class="clear"></div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+
+        <!-- tab 13 -->
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title"> <a href="#collapse13" data-toggle="collapse" id="lnkCollapse13">Section 13 - Sonic Voice</a> </h4>
+                <span class="validate-mark hide"></span>
+            </div>
+            <div class="panel-collapse collapse" id="collapse13" data-parent="#accordion">
+                <div class="card-body">
+                <table class="table tbl_sonicVoice mb-2">
+                    <tbody id="sonicVoiceTableBody">
+                    @if($cv_block_13sv_data!='')
+                        @foreach($cv_block_13sv_data as $b13svkey => $b13svitem)
+                        <tr class="first" row-number="{{$b13svkey}}" id="tblRow_{{$b13svkey}}">
+                            <td>
+                            <div class="row">
+                                <div class="col-md-6 fl mb-3">
+                                <label for="section_13sv_title_{{$b13svkey}}" class="col-form-label">Title:</label>
+                                <div class="input-group">
+                                    <input class="section_13sv_id" type="hidden" id="section_13sv_id_{{$b13svkey}}" name="section_13sv_id_{{$b13svkey}}" value="{{$b13svitem->b13sv_id}}">
+                                    <input class="form_control_inner section_13sv_title" type="text" name="section_13sv_title_{{$b13svkey}}" id="section_13sv_title_{{$b13svkey}}" value="{{$b13svitem->b13sv_title}}" maxlength="255" onClick="limitChecker('custSecInput', 'section_13sv_title_{{$b13svkey}}')" onchange="limitChecker('custSecInput', 'section_13sv_title_{{$b13svkey}}')" onblur="limitChecker('custSecInput', 'section_13sv_title_{{$b13svkey}}')" onfocus="limitChecker('custSecInput', 'section_13sv_title_{{$b13svkey}}')">
+                                </div>
+                                </div>
+                                <div class="col-md-6 fr mb-4">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <label for="sonic_voice_audio_file_{{$b13svkey}}" class="col-form-label">Sonic Voice:</label>
+                                    @if($b13svitem->b13sv_name == '' && $b13svitem->b13sv_name == null)
+                                        <a class="btn_delRow" onclick="refreshAudioFile('sonic_voice_audio_file_{{$b13svkey}}', 'sonic_voice_file_audio_{{$b6key}}');" style="position: relative; top: 0px; margin: 0px;">
+                                            <i class="fa fa-times"></i>
+                                        </a>
+                                    @endif
+                                    </div>
+                                    <div class="input-group" style="position: relative; top: -3px;">
+                                {{-- <label for="cv_logo" class="col-form-label">Snapshot Logo: <span class="text-asterisk">*</span></label> --}}
+                                    <label for="sonic_voice_audio_file_{{$b13svkey}}" style="width: 100%;">
+                                        <div class="div-musicTMimg-holder sonic_voice_audio_file">
+                                        <div class="btn btn-info btn-file"> <i class="fa fa-paperclip"></i> Upload
+                                            <input type="file" id="sonic_voice_audio_file_{{$b13svkey}}" name="sonic_voice_audio_file_{{$b13svkey}}" onchange="soncVoiceAudio('{{$b13svkey}}',event)" value="{{ $b13svitem->b13sv_name }}"/>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <div class="mtop10">
+                                            @if($b13svitem->b13sv_name != '' || $b13svitem->b13sv_name != null)
+                                            <audio id="sonic_voice_file_audio_{{$b13svkey}}" controls class="">
+                                                <source src="{{URL::to('public/audios/cv_audios')}}/{{ $b13svitem->b13sv_name }}" id="sonic_voice_file_audio_src_{{$b13svkey}}" />
+                                                <input type="hidden" id="old_sonic_voice_audio_file_{{$b13svkey}}" name="old_sonic_voice_audio_file_{{$b13svkey}}" value="{{ $b13svitem->b13sv_name }}" />
+                                            </audio>
+                                            @else
+                                            <audio id="sonic_voice_file_audio_{{$b13svkey}}" controls class="hide">
+                                                <source src="" id="sonic_voice_file_audio_src_{{$b13svkey}}" />
+                                            </audio>
+                                            @endif
+                                        </div>
+                                        </div>
+                                    </label>
+                                    <span class="text-danger">@error('sonic_voice_audio_file_{{$b13svkey}}') {{ $message }} @enderror</span>
+                                    <span id="sonic_voice_file_audio_error_{{$b13svkey}}" class="text-danger sonic_voice_file_audio_error hide">The sonic voice must be a file of type: mp3, wav, wma, aac, m4a.</span>
+                                    </div>
+                                </div>
+
+                                <div class="clearfix"></div>
+                            </div>
+                            </td>
+                            <td style="text-align: right; width:38px;">
+                            <label>&nbsp;</label>
+                            @if($b13svkey == 0)
+                                <div><a class="btn_addRow b13svplus" onclick="funsonicVoice.createRow('edit');"><i class="fa fa-plus"></i></a></div>
+                            @else
+                                <div><a class="btn_addRow" onclick="funsonicVoice.deleteRows(this,'edit');" style="position: relative; top: 0px;"><i class="fa fa-times"></i></a></div>
+                            @endif
+                            </td>
+                        </tr>
+                        @endforeach
+                    @else
+                        <tr class="first" row-number="0" id="tblRow_0">
+                        <td>
+                            <div class="row">
+                            <div class="col-md-6 fl mb-3">
+                                <label for="section_13sv_title_0" class="col-form-label">Title:</label>
+                                <div class="input-group">
+                                <input class="section_13sv_id" type="hidden" id="section_13sv_id_0" name="section_13sv_id_0" value="">
+                                <input class="form_control_inner section_13sv_title" type="text" name="section_13sv_title_0" id="section_13sv_title_0" value="Sonic Voice" maxlength="255" onClick="limitChecker('custSecInput', 'section_13sv_title_0')" onchange="limitChecker('custSecInput', 'section_13sv_title_0')" onblur="limitChecker('custSecInput', 'section_13sv_title_0')" onfocus="limitChecker('custSecInput', 'section_13sv_title_0')">
+                                </div>
+                            </div>
+                            <div class="col-md-6 fr mb-4">
+                                {{-- <label for="cv_logo" class="col-form-label">Snapshot Logo: <span class="text-asterisk">*</span></label> --}}
+                                <div style="display: flex; justify-content: space-between;">
+                                <label for="sonic_voice_audio_file_0" class="col-form-label">Sonic Voice:</label>
+                                <a class="btn_delRow" onclick="refreshAudioFile('sonic_voice_audio_file_0', 'sonic_voice_file_audio_0');" style="position: relative; top: 0px; margin: 0px;">
+                                    <i class="fa fa-times"></i>
+                                </a>
+                                </div>
+                                <div class="input-group" style="position: relative; top: -3px;">
+                                    <label for="sonic_voice_audio_file_0" style="width: 100%;">
+                                    <div class="div-musicTMimg-holder sonic_voice_audio_file">
+                                        <div class="btn btn-info btn-file"> <i class="fa fa-paperclip"></i> Upload
+                                        <input type="file" id="sonic_voice_audio_file_0" name="sonic_voice_audio_file_0" onchange="soncVoiceAudio('0',event)" value="{{ old('sonic_voice_audio_file_0') }}"/>
+                                        </div>
+                                        <div class="clearfix"></div>
+                                        <div class="mtop10">
+                                        <audio id="sonic_voice_file_audio_0" controls class="hide">
+                                            <source src="" id="sonic_voice_file_audio_src_0" />
+                                        </audio>
+                                        </div>
+                                    </div>
+                                    </label>
+                                    <span class="text-danger">@error('sonic_voice_audio_file_0') {{ $message }} @enderror</span>
+                                    <span id="sonic_voice_file_audio_error_0" class="text-danger sonic_voice_file_audio_error hide">The sonic voice must be a file of type: mp3, wav, wma, aac, m4a.</span>
+                                </div>
+                            </div>
+
+                            <div class="clearfix"></div>
+                            </div>
+                        </td>
+                        <td style="text-align: right; width:38px;">
+                            <label>&nbsp;</label>
+                            <div><a class="btn_addRow b6plus" onclick="funsonicVoice.createRow();"><i class="fa fa-plus"></i></a></div>
+                        </td>
+                        </tr>
+                    @endif
+                    </tbody>
+                </table>
+                @if($cv_block_13sv_data!='')
+                    <input type="hidden" id="sonic_voice_count" name="sonic_voice_count" value="{{count($cv_block_13sv_data)}}">
+                @else
+                    <input type="hidden" id="sonic_voice_count" name="sonic_voice_count" value="1">
+                @endif
+                <div class="text-right"> <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('13','14')">Next</a> </div>
+                <div class="clear"></div>
+                </div>
+                <div class="clear"></div>
+            </div>
+        </div>
+
+
+
+          <!-- tab 14 -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse14" data-toggle="collapse" id="lnkCollapse14">Section 14 - Sonic Logo Usage</a> </h4>
+              <span class="validate-mark hide"></span>
+            </div>
+            <div class="panel-collapse collapse" id="collapse14" data-parent="#accordion">
+              <div class="card-body">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <table class="table tbl_SonicUsage mb-2">
+                        <thead>
+                          <tr>
+                            <td>
+                              <div class="row">
+                                <div class="col-md-8 mb-3">
+                                  <label for="section_7_title" class="col-form-label">Section 14 Title:</label>
+                                  <div class="input-group">
+                                    <input type="text" id="section_7_title" name="section_7_title" class="card_inputs" value="@if($cv_block_7_data!=''){{ $cv_block_7_data[0]->b7_title }}@else Sonic Logo Usage @endif" maxlength="255" onclick="limitChecker('custSecInput', 'section_7_title')" onchange="limitChecker('custSecInput', 'section_7_title')" onblur="limitChecker('custSecInput', 'section_7_title')" onfocus="limitChecker('custSecInput', 'section_7_title')" />
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        </thead>
+                        <tbody id="sonicUsageTableBody">
+                          <!-- row -->
+                          @if ($cv_block_7_data!='')
+                            <tr class="first" row-number="0" id="tblRow_0">
+                              <td>
+                                <div class="">
+                                  <div class="row">
+                                    <div class="col-md-8 mb-3">
+                                      <label for="cv_sonic_usage_legend_name_0" class="col-form-label">Sonic Usage Legend Name:</label>
+                                      <input type="text" class="card_inputs" name="cv_sonic_usage_legend_name_0" id="cv_sonic_usage_legend_name_0" value="Yes">
+                                      <input type="hidden" id="cv_sonic_usage_legend_id_0" name="cv_sonic_usage_legend_id_0" value="{{$cv_block_7_data[0]->b7_id}}">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                      <label for="cv_sonic_usage_legend_number_0" class="col-form-label">Sonic Usage Legend Number:</label>
+                                      <input type="text" name="cv_sonic_usage_legend_number_0" id="cv_sonic_usage_legend_number_0" class="card_inputs numZeroToHundred" onkeyup="setSonicUsageLegendNumber('yes',this.value)" maxlength="3" placeholder="Enter Legend Number" value="{{$cv_block_7_data[0]->b7_number}}" />
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr class="first" row-number="0" id="tblRow_1">
+                              <td>
+                                <div class="cust-row-2">
+                                  <div class="row">
+                                    <div class="col-md-8 mb-3">
+                                      <label for="cv_sonic_usage_legend_name_1" class="col-form-label">Sonic Usage Legend Name:</label>
+                                      <input type="text" class="card_inputs" name="cv_sonic_usage_legend_name_1" id="cv_sonic_usage_legend_name_1" value="No">
+                                      <input type="hidden" id="cv_sonic_usage_legend_id_1" name="cv_sonic_usage_legend_id_1" value="{{$cv_block_7_data[1]->b7_id}}">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                      <label for="cv_sonic_usage_legend_number_1" class="col-form-label">Sonic Usage Legend Number:</label>
+                                      <input type="text" name="cv_sonic_usage_legend_number_1" id="cv_sonic_usage_legend_number_1" class="card_inputs numZeroToHundred" onkeyup="setSonicUsageLegendNumber('no',this.value)" maxlength="3" placeholder="Enter Legend Number" value="{{$cv_block_7_data[1]->b7_number}}" />
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          @else
+                            <tr class="first" row-number="0" id="tblRow_0">
+                              <td>
+                                <div class="">
+                                  <div class="row">
+                                    <div class="col-md-8 mb-3">
+                                      <label for="cv_sonic_usage_legend_name_0" class="col-form-label">Sonic Usage Legend Name:</label>
+                                      <input type="text" class="card_inputs" name="cv_sonic_usage_legend_name_0" id="cv_sonic_usage_legend_name_0" value="Yes">
+                                      <input type="hidden" id="cv_sonic_usage_legend_id_0" name="cv_sonic_usage_legend_id_0" value="">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                      <label for="cv_sonic_usage_legend_number_0" class="col-form-label">Sonic Usage Legend Number:</label>
+                                      <input type="text" name="cv_sonic_usage_legend_number_0" id="cv_sonic_usage_legend_number_0" class="card_inputs numZeroToHundred" maxlength="3" placeholder="Enter Legend Number" value="{{ old('cv_sonic_usage_legend_number_0') }}" />
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                            <tr class="first" row-number="0" id="tblRow_1">
+                              <td>
+                                <div class="cust-row-2">
+                                  <div class="row">
+                                    <div class="col-md-8 mb-3">
+                                      <label for="cv_sonic_usage_legend_name_1" class="col-form-label">Sonic Usage Legend Name:</label>
+                                      <input type="text" class="card_inputs" name="cv_sonic_usage_legend_name_1" id="cv_sonic_usage_legend_name_1" value="No">
+                                      <input type="hidden" id="cv_sonic_usage_legend_id_1" name="cv_sonic_usage_legend_id_1" value="">
+                                    </div>
+                                    <div class="col-md-4 mb-3">
+                                      <label for="cv_sonic_usage_legend_number_1" class="col-form-label">Sonic Usage Legend Number:</label>
+                                      <input type="text" name="cv_sonic_usage_legend_number_1" id="cv_sonic_usage_legend_number_1" class="card_inputs numZeroToHundred" maxlength="3" placeholder="Enter Legend Number" value="{{ old('cv_sonic_usage_legend_number_1') }}" />
+                                    </div>
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          @endif
+                        </tbody>
+                      </table>
+                      <input type="hidden" id="sonic_usage_count" name="sonic_usage_count" value="2">
+                      <div class="clear"></div>
+                    </div>
+                  </div>
+                <div class="clear"></div>
+                <div class="text-right"> <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('14','15')">Next</a> </div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+
+          <!-- tab 15 -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse15" data-toggle="collapse" id="lnkCollapse15">Section 15 - Sonic Logo Usage (Industry Average)</a> </h4>
+              <span class="validate-mark hide"></span>
+            </div>
+            <div class="panel-collapse collapse" id="collapse15" data-parent="#accordion">
+              <div class="card-body">
+                <div class="clear"></div>
+                <div class="text-right"> <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('15','16')">Next</a> </div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+
+          <!-- tab 16 -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse16" data-toggle="collapse" id="lnkCollapse16">Section 16 - Money Spent On Audio</a> </h4>
+              <span class="validate-mark hide"></span> </div>
+            <div class="panel-collapse collapse" id="collapse16" data-parent="#accordion">
+              <div class="card-body">
+                <div class="clear"></div>
+                <div class="text-right">
+                  <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('16','17')">Next</a> </div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+
+          <!-- tab 17 -->
+          {{-- <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse16" data-toggle="collapse" id="lnkCollapse16">Section 16 - Music Types Usage (On Average)</a> </h4>
+              <span class="validate-mark hide"></span>
+            </div>
+            <div class="panel-collapse collapse" id="collapse16" data-parent="#accordion">
+              <div class="card-body">
+                <div class="">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <table class="table tbl_blockOfExp mb-2">
+                        <thead>
+                          <tr>
+                            <td>
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <div class="input-group mb-3">
+                                    <label for="section_13_title" class="col-form-label">Section 16 Title:</label>
+                                    <input type="text" id="section_13_title" name="section_13_title" class="card_inputs" value="@if($cv_block_13_data!=''){{ $cv_block_13_data[0]->b13_title }}@else MUSIC TYPES USAGE (ON AVERAGE) @endif" maxlength="255" onclick="limitChecker('custSecInput', 'section_13_title')" onchange="limitChecker('custSecInput', 'section_13_title')" onblur="limitChecker('custSecInput', 'section_13_title')" onfocus="limitChecker('custSecInput', 'section_13_title')" />
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td></td>
+                          </tr>
+                        </thead>
+                        <tbody id="fBlockOfExpTableBody">
+                          <!-- row -->
+                          @if($cv_block_13_data!='')
+                            @php $exp_val_sum = 0; $cv_block_13_data_counter = 0;@endphp
+                            @foreach($cv_block_13_data as $b13key => $b13item)
+                              @if($b13item->b13_name_id != 6)
+                              @php $exp_val_sum = $exp_val_sum + $b13item->b13_number; $cv_block_13_data_counter = $cv_block_13_data_counter+1;@endphp
+                                <tr class="first" row-number="{{$b13key}}" id="tblRow_{{$b13key}}">
+                                  <td>
+                                    <div class="row">
+                                      <div class="col-md-6 fl mb-3">
+                                        <input class="efb_id" type="hidden" id="cv_efb_id_{{$b13key}}" name="cv_efb_id_{{$b13key}}" value="{{$b13item->b13_id}}">
+                                        <label for="cv_efb_name_id_{{$b13key}}" class="col-form-label">Legend Name:</label>
+                                        <select class="card_inputs dropdownDownArrow" name="cv_efb_name_id_{{$b13key}}" id="cv_efb_name_id_{{$b13key}}">
+                                          <option value="0">Select Experience</option>
+                                          @foreach ($experience_data as $item)
+                                            @if( $item->experience_name != 'No Music')
+                                              <option value="{{ $item->experience_id }}" {{ ( $item->experience_id  ==  $b13item->b13_name_id ) ? 'selected' : '' }}> {{ $item->experience_name }} </option>
+                                            @endif
+                                          @endforeach
+                                        </select>
+                                        <input type="hidden" id="old_cv_efb_name_id_{{$b13key}}" name="old_cv_efb_name_id_{{$b13key}}" value="{{ $b13item->b13_name_id }}">
+                                      </div>
+                                      <div class="col-md-6 fr mb-3">
+                                        <label for="cv_efb_number_{{$b13key}}" class="col-form-label">Legend Number:</label>
+                                        <input type="text" id="cv_efb_number_{{$b13key}}" name="cv_efb_number_{{$b13key}}" class="card_inputs numZeroToHundred sumSec16Numbers" maxlength="3" value="{{ $b13item->b13_number }}" />
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td style="text-align: right; width:38px;">
+                                    <label>&nbsp;</label>
+                                    @if($b13key==0)
+                                      <div>
+                                        <a class="btn_addRow b13plus" onclick="fBlockOfExp.createRow();"><i class="fa fa-plus"></i></a>
+                                      </div>
+                                    @else
+                                      <div>
+                                        <a class="btn_addRow" onclick="fBlockOfExp.deleteRows(this);" style="position: relative; top: 0px;"><i class="fa fa-times"></i></a>
+                                      </div>
+                                    @endif
+                                  </td>
+                                </tr>
+                              @endif
+                              @if($b13item->b13_name_id == 6)
+                                @php
+                                  $b13_id = $b13item->b13_id;
+                                  $b13_name_id = 6;
+                                @endphp
+                              @else
+                                @php
+                                  $b13_id = "";
+                                  $b13_name_id = 6;
+                                @endphp
+                              @endif
+                            @endforeach
+                            @php $no_music_val = 100 - $exp_val_sum; @endphp
+                            <tr class="last" row-number="{{$cv_block_13_data_counter}}">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="efb_id" type="hidden" id="cv_efb_id_{{$cv_block_13_data_counter}}" name="cv_efb_id_{{$cv_block_13_data_counter}}" value="{{$b13_id}}">
+                                    <label for="cv_efb_name_id_{{$cv_block_13_data_counter}}" class="col-form-label">Legend Name:</label>
+                                    <select class="card_inputs dropdownDownArrow" name="cv_efb_name_id_{{$cv_block_13_data_counter}}" id="cv_efb_name_id_{{$cv_block_13_data_counter}}">
+                                      <option value="0" class="hide">Select Experience</option>
+                                      @foreach ($experience_data as $item)
+                                        @if( $item->experience_id == 6)
+                                          <option value="{{ $item->experience_id }}" selected> {{ $item->experience_name }} </option>
+                                        @endif
+                                      @endforeach
+                                    </select>
+                                    <input type="hidden" id="old_cv_efb_name_id_{{$cv_block_13_data_counter}}" name="old_cv_efb_name_id_{{$cv_block_13_data_counter}}" value="{{$b13_name_id}}">
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_efb_number_{{$cv_block_13_data_counter}}" class="col-form-label">Legend Number:</label>
+                                    <input type="text" id="cv_efb_number_{{$cv_block_13_data_counter}}" name="cv_efb_number_{{$cv_block_13_data_counter}}" class="card_inputs numZeroToHundred noMusicInpt" maxlength="3" placeholder="Number" value="{{ $no_music_val }}" readonly/>
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                              </td>
+                            </tr>
+                          @else
+                            <tr class="first" row-number="0" id="tblRow_0">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="efb_id" type="hidden" id="cv_efb_id_0" name="cv_efb_id_0" value="">
+                                    <label for="cv_efb_name_id_0" class="col-form-label">Legend Name:</label>
+                                    <select class="card_inputs dropdownDownArrow" name="cv_efb_name_id_0" id="cv_efb_name_id_0">
+                                      <option value="0">Select Experience</option>
+                                      @foreach ($experience_data as $item)
+                                      @if( $item->experience_name != 'No Music')
+                                        <option value="{{ $item->experience_id }}"> {{ $item->experience_name }} </option>
+                                      @endif
+                                      @endforeach
+                                    </select>
+                                    <input type="hidden" id="old_cv_efb_name_id_0" name="old_cv_efb_name_id_0" value="">
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_efb_number_0" class="col-form-label">Legend Number:</label>
+                                    <input type="text" id="cv_efb_number_0" name="cv_efb_number_0" class="card_inputs numZeroToHundred" maxlength="3" placeholder="Number" value="{{ old('cv_efb_number_0') }}" />
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                                <div>
+                                  <a class="btn_addRow b13plus" onclick="fBlockOfExp.createRow();"><i class="fa fa-plus"></i></a>
+                                </div>
+                              </td>
+                            </tr>
+
+                            <tr class="last" row-number="0">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="efb_id" type="hidden" id="cv_efb_id_1" name="cv_efb_id_1" value="">
+                                    <label for="cv_efb_name_id_1" class="col-form-label">Legend Name:</label>
+                                    <select class="card_inputs dropdownDownArrow" name="cv_efb_name_id_1" id="cv_efb_name_id_1">
+                                      <option value="0" class="hide">Select Experience</option>
+                                      @foreach ($experience_data as $item)
+                                      @if($item->experience_id == 6)
+                                        <option value="{{ $item->experience_id }}" selected> {{ $item->experience_name }} </option>
+                                      @endif
+                                      @endforeach
+                                    </select>
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_efb_number_1" class="col-form-label">Legend Number:</label>
+                                    <input type="text" id="cv_efb_number_1" name="cv_efb_number_1" class="card_inputs numZeroToHundred noMusicInpt" maxlength="3" placeholder="Number" value="100" readonly />
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                              </td>
+                            </tr>
+                          @endif
+                        </tbody>
+                      </table>
+                      @if(count($cv_block_13_data) > 1)
+                        <input type="hidden" id="efb_count" name="efb_count" value="{{$cv_block_13_data_counter+1}}">
+                      @else
+                        <input type="hidden" id="efb_count" name="efb_count" value="2">
+                      @endif
+                    </div>
+                  </div>
+                  <div class="text-right"> <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('16','17')">Next</a> </div>
+                  <div class="clear"></div>
+                </div>
+              </div>
+            </div>
+          </div> --}}
+
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse17" data-toggle="collapse" id="lnkCollapse17">Section 17 - Music Types Usage (On Average)</a> </h4>
+              <span class="validate-mark hide"></span>
+            </div>
+            <div class="panel-collapse collapse" id="collapse17" data-parent="#accordion">
+              <div class="card-body">
+                <div class="">
+                  <div class="row">
+                    <div class="col-md-12">
+                      <table class="table tbl_blockOfExp mb-2">
+                        <thead>
+                          <tr>
+                            <td>
+                              <div class="row">
+                                <div class="col-md-6">
+                                  <div class="input-group mb-3">
+                                    <label for="section_13_title" class="col-form-label">Section 17 Title:</label>
+                                    {{-- <input type="text" id="section_13_title" name="section_13_title" class="card_inputs" value="@if($cv_block_13_data!=''){{ $cv_block_13_data[0]->b13_title }}@else MUSIC TYPES USAGE (ON AVERAGE) @endif" maxlength="255" onclick="limitChecker('custSecInput', 'section_13_title')" onchange="limitChecker('custSecInput', 'section_13_title')" onblur="limitChecker('custSecInput', 'section_13_title')" onfocus="limitChecker('custSecInput', 'section_13_title')" /> --}}
+                                    <input type="text" id="section_13_title" name="section_13_title" class="card_inputs" value="Music Types Usage (On Average)" maxlength="255" onclick="limitChecker('custSecInput', 'section_13_title')" onchange="limitChecker('custSecInput', 'section_13_title')" onblur="limitChecker('custSecInput', 'section_13_title')" onfocus="limitChecker('custSecInput', 'section_13_title')" />
+                                  </div>
+                                </div>
+                              </div>
+                            </td>
+                            <td></td>
+                          </tr>
+                        </thead>
+                        <tbody id="fBlockOfExpTableBody">
+                          <!-- row -->
+                          @if(count($cv_block_13_data) > 0)
+                            @php $exp_val_sum = 0; $cv_block_13_data_counter = 0;@endphp
+                            @foreach($experience_data as $ek => $ed)
+                              @if(array_key_exists($ed->experience_id, $cv_block_13_data))
+                                @php
+                                  if($ed->experience_id != 6 && $ed->experience_id != 0)
+                                  {
+                                    $crntval = (int)explode("#_#",$cv_block_13_data[$ed->experience_id])[1];
+                                    $exp_val_sum = $exp_val_sum + $crntval;
+                                  }
+                                @endphp
+                                <tr @if($ed->experience_id != 6)class="first"@else class="last" @endif row-number="{{$ek+1}}" id="tblRow_{{$ek}}">
+                                  <td>
+                                    <div class="row">
+                                      <div class="col-md-6 fl mb-3">
+                                        <input class="efb_id" type="hidden" id="cv_efb_id_{{$ek}}" name="cv_efb_id_{{$ek}}" value="{{(int)explode("#_#",$cv_block_13_data[$ed->experience_id])[0]}}">
+                                        <label for="cv_efb_name_id_{{$ek}}" class="col-form-label">Legend Name:</label>
+                                        <input type="text" id="cv_efb_name_{{$ek}}" name="cv_efb_name_{{$ek}}" class="card_inputs" value="{{$ed->experience_name}}" readonly/>
+                                        <input type="hidden" id="cv_efb_name_id_{{$ek}}" name="cv_efb_name_id_{{$ek}}" value="{{ $ed->experience_id }}">
+                                      </div>
+                                      <div class="col-md-6 fr mb-3">
+                                        <label for="cv_efb_number_{{$ek}}" class="col-form-label">Legend Number:</label>@if($ed->experience_id == 6)<span style="color: red; float: right;">Total:<span id="sumTotal" >{{$exp_val_sum}}</span></span>@endif
+                                        {{-- <input type="text" id="cv_efb_number_{{$ek}}" name="cv_efb_number_{{$ek}}" class="card_inputs numZeroToHundred sumSec16Numbers" maxlength="3" value="{{ (int)explode("#_#",$cv_block_13_data[$ed->experience_id])[1] }}" /> --}}
+                                        @if($ed->experience_id != 6)
+                                          <input type="text" id="cv_efb_number_{{$ek}}" name="cv_efb_number_{{$ek}}" class="card_inputs numZeroToHundred sumSec16Numbers" maxlength="3" value="{{ (int)explode("#_#",$cv_block_13_data[$ed->experience_id])[1] }}" />
+                                        @else
+                                          @if(100 - (int)$exp_val_sum < 0)
+                                            <input type="text" id="cv_efb_number_{{$ek}}" name="cv_efb_number_{{$ek}}"  class="card_inputs numZeroToHundred noMusicInpt" maxlength="3" value="0" readonly/>
+                                          @else
+                                            <input type="text" id="cv_efb_number_{{$ek}}" name="cv_efb_number_{{$ek}}"  class="card_inputs numZeroToHundred noMusicInpt" maxlength="3" value="{{100 - (int)$exp_val_sum}}" readonly/>
+                                          @endif
+                                        @endif
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td style="text-align: right; width:38px;">
+                                    <label>&nbsp;</label>
+                                  </td>
+                                </tr>
+                              @else
+                                @php
+                                  $crntval = 0;
+                                  $exp_val_sum = $exp_val_sum + $crntval;
+                                @endphp
+                                <tr @if($ed->experience_id != 6)class="first"@else class="last" @endif row-number="{{$ek+1}}" id="tblRow_{{$ek}}">
+                                  <td>
+                                    <div class="row">
+                                      <div class="col-md-6 fl mb-3">
+                                        <input class="efb_id" type="hidden" id="cv_efb_id_{{$ek}}" name="cv_efb_id_{{$ek}}" value="">
+                                        <label for="cv_efb_name_id_{{$ek}}" class="col-form-label">Legend Name:</label>
+                                        <input type="text" id="cv_efb_name_{{$ek}}" name="cv_efb_name_{{$ek}}" class="card_inputs" value="{{$ed->experience_name}}" readonly/>
+                                        <input type="hidden" id="cv_efb_name_id_{{$ek}}" name="cv_efb_name_id_{{$ek}}" value="{{ $ed->experience_id }}">
+                                      </div>
+                                      <div class="col-md-6 fr mb-3">
+                                        <label for="cv_efb_number_{{$ek}}" class="col-form-label">Legend Number:</label>@if($ed->experience_id == 6)<span style="color: red; float: right;">Total:<span id="sumTotal" >{{$exp_val_sum}}</span></span>@endif
+                                        @if($ed->experience_id != 6)
+                                          <input type="text" id="cv_efb_number_{{$ek}}" name="cv_efb_number_{{$ek}}" class="card_inputs numZeroToHundred sumSec16Numbers" maxlength="3" value="0"/>
+                                        @else
+                                          @if(100 - (int)$exp_val_sum < 0)
+                                            <input type="text" id="cv_efb_number_{{$ek}}" name="cv_efb_number_{{$ek}}"  class="card_inputs numZeroToHundred noMusicInpt" maxlength="3" value="0" readonly/>
+                                          @else
+                                            <input type="text" id="cv_efb_number_{{$ek}}" name="cv_efb_number_{{$ek}}"  class="card_inputs numZeroToHundred noMusicInpt" maxlength="3" value="{{100 - (int)$exp_val_sum}}" readonly/>
+                                          @endif
+                                        @endif
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td style="text-align: right; width:38px;">
+                                    <label>&nbsp;</label>
+                                  </td>
+                                </tr>
+                              @endif
+                            @endforeach
+                          @else
+                            <tr class="first" row-number="1" id="tblRow_0">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="efb_id" type="hidden" id="cv_efb_id_0" name="cv_efb_id_0" value="">
+                                    <label for="cv_efb_name_id_0" class="col-form-label">Legend Name:</label>
+                                    <input type="text" id="cv_efb_name_0" name="cv_efb_name_0" class="card_inputs" value="Owned" readonly/>
+                                    <input type="hidden" id="cv_efb_name_id_0" name="cv_efb_name_id_0" value="2">
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_efb_number_0" class="col-form-label">Legend Number:</label>
+                                    <input type="text" id="cv_efb_number_0" name="cv_efb_number_0" class="card_inputs numZeroToHundred sumSec16Numbers" maxlength="3" placeholder="Number" value="{{ old('cv_efb_number_0') }}" />
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                              </td>
+                            </tr>
+
+                            <tr class="first" row-number="2" id="tblRow_1">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="efb_id" type="hidden" id="cv_efb_id_1" name="cv_efb_id_1" value="">
+                                    <label for="cv_efb_name_id_1" class="col-form-label">Legend Name:</label>
+                                    <input type="text" id="cv_efb_name_1" name="cv_efb_name_1" class="card_inputs" value="Licensed" readonly/>
+                                    <input type="hidden" id="cv_efb_name_id_1" name="cv_efb_name_id_1" value="4">
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_efb_number_1" class="col-form-label">Legend Number:</label>
+                                    <input type="text" id="cv_efb_number_1" name="cv_efb_number_1" class="card_inputs numZeroToHundred sumSec16Numbers" maxlength="3" placeholder="Number" value="{{ old('cv_efb_number_1') }}" />
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                              </td>
+                            </tr>
+
+                            <tr class="first" row-number="3" id="tblRow_2">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="efb_id" type="hidden" id="cv_efb_id_2" name="cv_efb_id_2" value="">
+                                    <label for="cv_efb_name_id_2" class="col-form-label">Legend Name:</label>
+                                    <input type="text" id="cv_efb_name_2" name="cv_efb_name_2" class="card_inputs" value="Public domain licensed" readonly/>
+                                    <input type="hidden" id="cv_efb_name_id_2" name="cv_efb_name_id_2" value="8">
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_efb_number_2" class="col-form-label">Legend Number:</label>
+                                    <input type="text" id="cv_efb_number_2" name="cv_efb_number_2" class="card_inputs numZeroToHundred sumSec16Numbers" maxlength="3" placeholder="Number" value="{{ old('cv_efb_number_2') }}" />
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                              </td>
+                            </tr>
+
+                            <tr class="first" row-number="4" id="tblRow_3">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="efb_id" type="hidden" id="cv_efb_id_3" name="cv_efb_id_3" value="">
+                                    <label for="cv_efb_name_id_3" class="col-form-label">Legend Name:</label>
+                                    <input type="text" id="cv_efb_name_3" name="cv_efb_name_3" class="card_inputs" value="Custom" readonly/>
+                                    <input type="hidden" id="cv_efb_name_id_3" name="cv_efb_name_id_3" value="3">
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_efb_number_3" class="col-form-label">Legend Number:</label>
+                                    <input type="text" id="cv_efb_number_3" name="cv_efb_number_3" class="card_inputs numZeroToHundred sumSec16Numbers" maxlength="3" placeholder="Number" value="{{ old('cv_efb_number_3') }}" />
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                              </td>
+                            </tr>
+
+                            <tr class="first" row-number="5" id="tblRow_4">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="efb_id" type="hidden" id="cv_efb_id_4" name="cv_efb_id_4" value="">
+                                    <label for="cv_efb_name_id_4" class="col-form-label">Legend Name:</label>
+                                    <input type="text" id="cv_efb_name_4" name="cv_efb_name_4" class="card_inputs" value="Stock" readonly/>
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_efb_number_4" class="col-form-label">Legend Number:</label>
+                                    <input type="text" id="cv_efb_number_4" name="cv_efb_number_4" class="card_inputs numZeroToHundred sumSec16Numbers" maxlength="3" placeholder="Number" value="{{ old('cv_efb_number_4') }}" />
+                                    <input type="hidden" id="cv_efb_name_id_4" name="cv_efb_name_id_4" value="5">
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                              </td>
+                            </tr>
+
+                            <tr class="last" row-number="6">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="efb_id" type="hidden" id="cv_efb_id_5" name="cv_efb_id_5" value="">
+                                    <label for="cv_efb_name_id_5" class="col-form-label">Legend Name:</label>
+                                    <input type="text" id="cv_efb_name_5" name="cv_efb_name_5" class="card_inputs" value="No Music" readonly/>
+                                    <input type="hidden" id="cv_efb_name_id_5" name="cv_efb_name_id_5" value="6">
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_efb_number_5" class="col-form-label">Legend Number:</label><span style="color: red; float:right;">Total:<span id="sumTotal" >0</span></span>
+                                    <input type="text" id="cv_efb_number_5" name="cv_efb_number_5" class="card_inputs numZeroToHundred noMusicInpt" maxlength="3" placeholder="Number" value="100" readonly />
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                              </td>
+                            </tr>
+                          @endif
+
+                          {{-- @if($cv_block_13_data!='')
+                            @php $exp_val_sum = 0; $cv_block_13_data_counter = 0;@endphp
+                            @foreach($experience_data as $ek => $ed)
+                              @if($ed->experience_id != 6)
+                                @php
+                                  if(array_key_exists($ed->experience_id, $cv_block_13_data))
+                                  {
+                                    $crntval = (int)explode("#_#",$cv_block_13_data[$ed->experience_id])[1];
+                                  }
+                                  else
+                                  {$crntval = 0;} $exp_val_sum = $exp_val_sum + $crntval; $cv_block_13_data_counter = $cv_block_13_data_counter+1;@endphp
+                                <tr class="first" row-number="{{$ek+1}}" id="tblRow_{{$ek}}">
+                                  <td>
+                                    <div class="row">
+                                      <div class="col-md-6 fl mb-3">
+                                        @if(array_key_exists($ed->experience_id, $cv_block_13_data))
+                                          <input class="efb_id" type="hidden" id="cv_efb_id_{{$ek}}" name="cv_efb_id_{{$ek}}" value="{{(int)explode("#_#",$cv_block_13_data[$ed->experience_id])[0]}}">
+                                        @else
+                                          <input class="efb_id" type="hidden" id="cv_efb_id_{{$ek}}" name="cv_efb_id_{{$ek}}" value="">
+                                        @endif
+                                        <label for="cv_efb_name_id_{{$ek}}" class="col-form-label">Legend Name:</label>
+                                        <input type="text" id="cv_efb_name_{{$ek}}" name="cv_efb_name_{{$ek}}" class="card_inputs" value="{{$ed->experience_name}}" readonly/>
+                                        <input type="hidden" id="cv_efb_name_id_{{$ek}}" name="cv_efb_name_id_{{$ek}}" value="{{ $ed->experience_id }}">
+                                      </div>
+                                      <div class="col-md-6 fr mb-3">
+                                        <label for="cv_efb_number_{{$ek}}" class="col-form-label">Legend Number:</label>
+                                        @if(array_key_exists($ed->experience_id, $cv_block_13_data))
+                                          <input type="text" id="cv_efb_number_{{$ek}}" name="cv_efb_number_{{$ek}}" class="card_inputs numZeroToHundred sumSec16Numbers" maxlength="3" value="{{ (int)explode("#_#",$cv_block_13_data[$ed->experience_id])[1] }}" />
+                                        @else
+                                        <input type="text" id="cv_efb_number_{{$ek}}" name="cv_efb_number_{{$ek}}" class="card_inputs numZeroToHundred sumSec16Numbers" maxlength="3" value="0" />
+                                        @endif
+
+                                      </div>
+                                    </div>
+                                  </td>
+                                  <td style="text-align: right; width:38px;">
+                                    <label>&nbsp;</label>
+                                  </td>
+                                </tr>
+                              @endif
+                              @if($ed->experience_id == 6)
+                                @php
+                                  $b13_id = (int)explode("#_#",$cv_block_13_data[$ed->experience_id])[0];
+                                  $b13_name_id = 6;
+                                @endphp
+                              @else
+                                @php
+                                  $b13_id = "";
+                                  $b13_name_id = 6;
+                                @endphp
+                              @endif
+                            @endforeach
+                            @php $no_music_val = 100 - $exp_val_sum; @endphp
+                            <tr class="last" row-number="6">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="efb_id" type="hidden" id="cv_efb_id_5" name="cv_efb_id_5" value="{{(int)explode("#_#",$cv_block_13_data[6])[0]}}">
+                                    <label for="cv_efb_name_id_5" class="col-form-label">Legend Name:</label>
+                                    <input type="text" id="cv_efb_name_5" name="cv_efb_name_5" class="card_inputs" value="{{$ed->experience_name}}" readonly/>
+                                    <input type="hidden" id="cv_efb_name_id_5" name="cv_efb_name_id_5" value="6">
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_efb_number_5" class="col-form-label">Legend Number:</label>
+                                    <input type="text" id="cv_efb_number_5" name="cv_efb_number_5" class="card_inputs numZeroToHundred noMusicInpt" maxlength="3" placeholder="Number" value="{{ $no_music_val }}" readonly/>
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                              </td>
+                            </tr>
+                          @else
+                            <tr class="first" row-number="1" id="tblRow_0">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="efb_id" type="hidden" id="cv_efb_id_0" name="cv_efb_id_0" value="">
+                                    <label for="cv_efb_name_id_0" class="col-form-label">Legend Name:</label>
+                                    <input type="text" id="cv_efb_name_0" name="cv_efb_name_0" class="card_inputs" value="Owned" readonly/>
+                                    <input type="hidden" id="cv_efb_name_id_0" name="cv_efb_name_id_0" value="2">
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_efb_number_0" class="col-form-label">Legend Number:</label>
+                                    <input type="text" id="cv_efb_number_0" name="cv_efb_number_0" class="card_inputs numZeroToHundred sumSec16Numbers" maxlength="3" placeholder="Number" value="{{ old('cv_efb_number_0') }}" />
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                              </td>
+                            </tr>
+
+                            <tr class="first" row-number="2" id="tblRow_1">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="efb_id" type="hidden" id="cv_efb_id_1" name="cv_efb_id_1" value="">
+                                    <label for="cv_efb_name_id_1" class="col-form-label">Legend Name:</label>
+                                    <input type="text" id="cv_efb_name_1" name="cv_efb_name_1" class="card_inputs" value="Licensed" readonly/>
+                                    <input type="hidden" id="cv_efb_name_id_1" name="cv_efb_name_id_1" value="4">
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_efb_number_1" class="col-form-label">Legend Number:</label>
+                                    <input type="text" id="cv_efb_number_1" name="cv_efb_number_1" class="card_inputs numZeroToHundred sumSec16Numbers" maxlength="3" placeholder="Number" value="{{ old('cv_efb_number_1') }}" />
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                              </td>
+                            </tr>
+
+                            <tr class="first" row-number="3" id="tblRow_2">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="efb_id" type="hidden" id="cv_efb_id_2" name="cv_efb_id_2" value="">
+                                    <label for="cv_efb_name_id_2" class="col-form-label">Legend Name:</label>
+                                    <input type="text" id="cv_efb_name_2" name="cv_efb_name_2" class="card_inputs" value="Public domain licensed" readonly/>
+                                    <input type="hidden" id="cv_efb_name_id_2" name="cv_efb_name_id_2" value="8">
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_efb_number_2" class="col-form-label">Legend Number:</label>
+                                    <input type="text" id="cv_efb_number_2" name="cv_efb_number_2" class="card_inputs numZeroToHundred sumSec16Numbers" maxlength="3" placeholder="Number" value="{{ old('cv_efb_number_2') }}" />
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                              </td>
+                            </tr>
+
+                            <tr class="first" row-number="4" id="tblRow_3">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="efb_id" type="hidden" id="cv_efb_id_3" name="cv_efb_id_3" value="">
+                                    <label for="cv_efb_name_id_3" class="col-form-label">Legend Name:</label>
+                                    <input type="text" id="cv_efb_name_3" name="cv_efb_name_3" class="card_inputs" value="Custom" readonly/>
+                                    <input type="hidden" id="cv_efb_name_id_3" name="cv_efb_name_id_3" value="3">
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_efb_number_3" class="col-form-label">Legend Number:</label>
+                                    <input type="text" id="cv_efb_number_3" name="cv_efb_number_3" class="card_inputs numZeroToHundred sumSec16Numbers" maxlength="3" placeholder="Number" value="{{ old('cv_efb_number_3') }}" />
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                              </td>
+                            </tr>
+
+                            <tr class="first" row-number="5" id="tblRow_4">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="efb_id" type="hidden" id="cv_efb_id_4" name="cv_efb_id_4" value="">
+                                    <label for="cv_efb_name_id_4" class="col-form-label">Legend Name:</label>
+                                    <input type="text" id="cv_efb_name_4" name="cv_efb_name_4" class="card_inputs" value="Stock" readonly/>
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_efb_number_4" class="col-form-label">Legend Number:</label>
+                                    <input type="text" id="cv_efb_number_4" name="cv_efb_number_4" class="card_inputs numZeroToHundred sumSec16Numbers" maxlength="3" placeholder="Number" value="{{ old('cv_efb_number_4') }}" />
+                                    <input type="hidden" id="cv_efb_name_id_4" name="cv_efb_name_id_4" value="5">
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                              </td>
+                            </tr>
+
+                            <tr class="last" row-number="6">
+                              <td>
+                                <div class="row">
+                                  <div class="col-md-6 fl mb-3">
+                                    <input class="efb_id" type="hidden" id="cv_efb_id_5" name="cv_efb_id_5" value="">
+                                    <label for="cv_efb_name_id_5" class="col-form-label">Legend Name:</label>
+                                    <input type="text" id="cv_efb_name_5" name="cv_efb_name_5" class="card_inputs" value="No Music" readonly/>
+                                    <input type="hidden" id="cv_efb_name_id_5" name="cv_efb_name_id_5" value="6">
+                                  </div>
+                                  <div class="col-md-6 fr mb-3">
+                                    <label for="cv_efb_number_5" class="col-form-label">Legend Number:</label>
+                                    <input type="text" id="cv_efb_number_5" name="cv_efb_number_5" class="card_inputs numZeroToHundred noMusicInpt" maxlength="3" placeholder="Number" value="100" readonly />
+                                  </div>
+                                </div>
+                              </td>
+                              <td style="text-align: right; width:38px;">
+                                <label>&nbsp;</label>
+                              </td>
+                            </tr>
+                          @endif --}}
+                        </tbody>
+                      </table>
+                      <input type="hidden" id="efb_count" name="efb_count" value="6">
+                    </div>
+                  </div>
+                  <div class="text-right"> <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('17','18')">Next</a> </div>
+                  <div class="clear"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- tab 18 -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse18" data-toggle="collapse" id="lnkCollapse18">Section 18 - Music Expenditure (Per Year)</a> </h4>
+              <span class="validate-mark hide"></span> </div>
+            <div class="panel-collapse collapse" id="collapse18" data-parent="#accordion">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-12 mb-3">
+                    <label for="section_14_title" class="col-form-label">Section 18 Title:</label>
+                    <input type="text" id="section_14_title" name="section_14_title" class="card_inputs" value='@if($cv_block_14_data!=''){{ $cv_block_14_data[0]->b14_title }}@else Music Expenditure (Per Year) @endif' maxlength="255" onclick="limitChecker('custSecInput', 'section_14_title')" onchange="limitChecker('custSecInput', 'section_14_title')" onblur="limitChecker('custSecInput', 'section_14_title')" onfocus="limitChecker('custSecInput', 'section_14_title')" />
+                  </div>
+                </div>
+                <div class="mepyHolder">
+                  @if($cv_block_14_data!='')
+                  <input type="hidden" id="mepy_count" name="mepy_count" value="{{ count($cv_block_14_data)}}">
+                  @else
+                  <input type="hidden" id="mepy_count" name="mepy_count" value="1">
+                  @endif
+                    @if($cv_block_14_data!='')
+                      @foreach($cv_block_14_data as $b14key => $b14item)
+
+                      <div class="form-group mepy mepy_{{$b14key}}"  row-number="{{$b14key}}">
+                        <input class="mepy_id" type="hidden" id="mepy_id_{{$b14key}}" name="mepy_id_{{$b14key}}" value="{{$b14item->b14_id}}">
+                        <div class="row">
+                          <div class="clearfix"></div>
+                          <div class="col-md-12 mb-3 mepy_number_hol">
+                            <label for="mepy_number_{{$b14key}}" class="col-form-label">Number:</label>
+                            <input class="form_control_inner txtnum numberonly" type="text" name="mepy_number_{{$b14key}}" id="mepy_number_{{$b14key}}" placeholder="Number" value="{{ $b14item->b14_number }}">
+                          </div>
+                        </div>
+                        <div class="mepy_description_hol">
+                          <label for="mepy_description_{{$b14key}}" class="col-form-label">Description:</label>
+                          <div class="mb-3 mepytxtarea">
+                            <textarea class="txtara1" name="mepy_description_{{$b14key}}" id="mepy_description_{{$b14key}}" placeholder="Description" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{{ $b14item->b14_description }}</textarea>
+                          </div>
+                        </div>
+                        <div class="clearfix"></div>
+                      </div>
+                      @endforeach
+                    @else
+                        <div class="form-group mepy mepy_0"  row-number="0">
+                          <input class="mepy_id" type="hidden" id="mepy_id_0" name="mepy_id_0" value="0">
+                          <div class="row">
+                            <div class="clearfix"></div>
+                            <div class="col-md-12 mb-3 mepy_number_hol">
+                              <label for="mepy_number_0" class="col-form-label">Number:</label>
+                              <input class="form_control_inner txtnum numberonly" type="text" name="mepy_number_0" id="mepy_number_0" placeholder="Number" value="{{ old('mepy_number_0') }}">
+                            </div>
+                          </div>
+                          <div class="mepy_description_hol">
+                            <label for="mepy_description_0" class="col-form-label">Description:</label>
+                            <div class="mb-3 mepytxtarea">
+                              <textarea class="txtara1" name="mepy_description_0" id="mepy_description_0" placeholder="Description" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{{ old('mepy_description_0') }}</textarea>
+                            </div>
+                          </div>
+                          <div class="clearfix"></div>
+                        </div>
+                    @endif
+                </div>
+                <div class="clear"></div>
+                <div class="text-right">
+                  <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('18','19')">Next</a> </div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+
+          <!-- tab 19 -->
+          <div class="card">
+            <div class="card-header">
+              <h4 class="card-title"> <a href="#collapse19" data-toggle="collapse" id="lnkCollapse19">Section 19 - Music Expenditure (Per Video)</a> </h4>
+              <span class="validate-mark hide"></span> </div>
+            <div class="panel-collapse collapse" id="collapse19" data-parent="#accordion">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-12 mb-3">
+                    <label for="section_15_title" class="col-form-label">Section 19 Title:</label>
+                    <input type="text" id="section_15_title" name="section_15_title" class="card_inputs" value='@if($cv_block_15_data!=''){{ $cv_block_15_data[0]->b15_title }}@else Music Expenditure (Per Video) @endif' maxlength="255" onclick="limitChecker('custSecInput', 'section_15_title')" onchange="limitChecker('custSecInput', 'section_15_title')" onblur="limitChecker('custSecInput', 'section_15_title')" onfocus="limitChecker('custSecInput', 'section_15_title')" />
+                  </div>
+                </div>
+                <div class="mepvHolder">
+                  @if($cv_block_15_data!='')
+                    <input type="hidden" id="mepv_count" name="mepv_count" value="{{count($cv_block_15_data)}}">
+                  @else
+                    <input type="hidden" id="mepv_count" name="mepv_count" value="1">
+                  @endif
+                  @if($cv_block_15_data!='')
+                    @foreach($cv_block_15_data as $b15key => $b15item)
+
+                      <div class="form-group mepv mepv_{{$b15key}}"  row-number="{{$b15key}}">
+                        <input class="mepv_id" type="hidden" id="mepv_id_{{$b15key}}" name="mepv_id_{{$b15key}}" value="{{$b15item->b15_id}}">
+                        <div class="row">
+                          <div class="clearfix"></div>
+                          <div class="col-md-12 mb-3 mepv_number_hol">
+                            <label for="mepv_number_{{$b15key}}" class="col-form-label">Number:</label>
+                            <input class="form_control_inner txtnum numberonly" type="text" name="mepv_number_{{$b15key}}" id="mepv_number_{{$b15key}}" placeholder="Number" value="{{$b15item->b15_number}}">
+                          </div>
+                        </div>
+                        <div class="mepv_description_hol">
+                          <label for="mepv_description_{{$b15key}}" class="col-form-label">Description:</label>
+                          <div class="mb-3 mepytxtarea">
+                            <textarea class="txtara1" name="mepv_description_{{$b15key}}" id="mepv_description_{{$b15key}}" placeholder="Description" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{{$b15item->b15_description}}</textarea>
+                          </div>
+                        </div>
+                        <div class="clearfix"></div>
+                      </div>
+                    @endforeach
+                  @else
+
+                    <div class="form-group mepv mepv_0"  row-number="0">
+                      <input class="mepv_id" type="hidden" id="mepv_id_0" name="mepv_id_0" value="">
+                      <div class="row">
+                        <div class="clearfix"></div>
+                        <div class="col-md-12 mb-3 mepv_number_hol">
+                          <label for="mepv_number_0" class="col-form-label">Number:</label>
+                          <input class="form_control_inner txtnum numberonly" type="text" name="mepv_number_0" id="mepv_number_0" placeholder="Number" value="{{ old('mepv_number_0') }}">
+                        </div>
+                      </div>
+                      <div class="mepv_description_hol">
+                        <label for="mepv_description_0" class="col-form-label">Description:</label>
+                        <div class="mb-3 mepytxtarea">
+                          <textarea class="txtara1" name="mepv_description_0" id="mepv_description_0" placeholder="Description" style="width: 100%; height: 200px; font-size: 14px; line-height: 18px; border: 1px solid #dddddd; padding: 10px;">{{ old('mepv_description_0') }}</textarea>
+                        </div>
+                      </div>
+                      <div class="clearfix"></div>
+                    </div>
+                  @endif
+                </div>
+                <div class="clear"></div>
+                {{-- <div class="col-md-12 text-right"> <a class="btn btn-primary btn-sm pull-right" onclick="validateAccordianTab('18','19')">Next</a> </div>
+                <div class="clear"></div> --}}
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+
+          <!-- tab 20 -->
+          <div class="card">
+            <div class="panel-collapse collapse show">
+              <div class="card-body">
+                <div class="row">
+                  <div class="col-md-4 predecessorHolder">
+                    <label for="parent_cv_name" class="col-form-label">Predecessor Name:</label>
+                    <select class="card_inputs predecessor dropdownDownArrow" id="parent_cv_name" name="parent_cv_name">
+                      <option value="0#_#sel">Select Predecessor/Parent</option>
+
+                      @forelse ($cv_parent_data as $item)
+                        @if(!in_array($item->cv_id,$cv_parent_ids_array) && ($item->cv_name." ".explode("-",$item->cv_date)[1] != $cv_data->cv_name." ".$cv_data->cv_year))
+                          <option value="{{ $item->cv_id."#_#".$item->cv_name }}" {{ ( $item->cv_id."#_#".$item->cv_name  ==  $cv_data->parent_id."#_#".$cv_data->parent ) ? 'selected' : '' }}> {{ $item->cv_name}} {{explode("-",$item->cv_date)[1]}}</option>
+                        @endif
+                      @empty
+                      {{-- <input type="hidden" id="parent_cv_name" name="parent_cv_name" value="0#_#sel"> --}}
+                      @endforelse
+
+                    </select>
+                    <input type="hidden" id="old_parent_cv_name" name="old_parent_cv_name" value="{{ ($cv_data->parent_id != '' && $cv_data->parent != '') ? $cv_data->parent_id."#_#".$cv_data->parent : ''}}">
+                    <span class="text-danger">@error('parent_cv_name') {{ $message }} @enderror</span>
+                    <div class="clear"></div>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="footer_template_name" class="col-form-label">Footer Template Name:</label>
+                    <select class="card_inputs dropdownDownArrow" id="footer_template_name" name="footer_template_name">
+                      <option value="0">Select Footer Template</option>
+
+                      @forelse ($footer_template_data as $item)
+                        <option value="{{ $item->footer_template_id }}" {{ ( $item->footer_template_id  ==  $cv_data->footer_template_id ) ? 'selected' : '' }}> {{ $item->footer_template_name}} </option>
+                      @empty
+                      @endforelse
+                    </select>
+                    <input type="hidden" id="old_footer_template_name" name="old_footer_template_name" value="{{ $cv_data->footer_template_id }}">
+                    <span class="text-danger">@error('footer_template_name') {{ $message }} @enderror</span>
+                    <div class="clear"></div>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="missing_data_flag_name" class="col-form-label">Missing Data Flag:</label>
+                    <select class="card_inputs dropdownDownArrow" id="missing_data_flag_name" name="missing_data_flag_name">
+                      <option value="-" {{ ( "-"  ==  $cv_data->md_flag ) ? 'selected' : '' }}>Select Flag</option>
+                      <option value="Yes" {{ ("Yes"  ==  $cv_data->md_flag ) ? 'selected' : '' }}>Yes</option>
+                      <option value="No" {{ ( "No"  ==  $cv_data->md_flag ) ? 'selected' : '' }}>No</option>
+                    </select>
+                    <input type="hidden" id="old_missing_data_flag_name" name="old_missing_data_flag_name" value="{{ $cv_data->md_flag }}">
+                    <span class="text-danger">@error('missing_data_flag_name') {{ $message }} @enderror</span>
+                    <div class="clear"></div>
+                  </div>
+                  <div class="clear"></div>
+                </div>
+              </div>
+              <div class="clear"></div>
+            </div>
+          </div>
+          <div class="clear">&nbsp;</div>
+
+          <div class="">
+            {{-- <div class="col-md-4 sonicCVBtn_Group">
+              <div class="btn-cust-1">&nbsp;
+                <button class="btn btn-primary disabled btn-cust-1" type="submit">Publish</button>
+              </div>
+            </div> --}}
+            <div class="col-md-4 sonicCVBtn_Group sonicCVBtn_Group_Lb">
+              <div class="btn-cust-2"> <a class="btn btn-default" onclick="previewCVData()">Preview</a> </div>
+            </div>
+            <div class="col-md-4 sonicCVBtn_Group sonicCVBtn_Group_Rb">
+              <div class="btn-cust-3">
+                <button class="btn btn-primary" type="submit" onClick="addLoader()">Save as Draft</button>
+              </div>
+            </div>
+          </div>
+
+        <div class="clear">&nbsp;</div>
+        </div>
+      </form>
+      <div class="clearfix"></div>
+    </div>
+  </div>
+  <!-- /.row -->
+</div>
+<!--/. container-fluid -->
+<div class="hide">
+    <select id="og_language">
+      <option value="0#_#sel"  class="hide">Select language</option>
+
+      @foreach ($country_lang_data as $country)
+          <option value="{{base64_encode($country->country_code)}}"> {{ $country->country}}</option>
+      @endforeach
+
+    </select>
+  </div>
+</section>
+<!-- /.content -->
+</div>
+<!-- /.content-wrapper -->
+
+@endsection

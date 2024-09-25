@@ -1,0 +1,121 @@
+// practice
+
+
+
+// var parentBrandName = $('#cv_id').val();
+// if(parentBrandName > 0){
+//     console.log('parentBrandName'+parentBrandName+" --- "+$("#img_url option").hasClass(parentBrandName));
+//     if($("#img_url option").hasClass(parentBrandName))
+//     {
+//         //$("#sub_industry_name option").removeAttr("selected");
+//         $("#img_url").removeAttr("disabled");
+//         $("#img_url option").removeClass("hide");
+//         $("#img_url option").not($("#img_url option."+parentBrandName)).addClass("hide");
+//         $("#img_url option[id='showHideSubInOptionId']").removeClass("hide");
+
+//     }
+//     else
+//     {
+//         $("#img_url option").removeAttr("selected");
+//         $("#img_url").attr("disabled","true");
+//         $("#img_url option").addClass("hide");
+//     }
+// }
+
+// $("#cv_name").on('change', function()
+// {
+    // var parentBrandName = $("#cv_name").val();
+    // console.log('parentBrandName'+parentBrandName+" --- "+$("#img_url option").hasClass(parentBrandName));
+
+//     if($("#img_url option").hasClass(parentBrandName))
+//     {
+//         $("#img_url option").removeAttr("selected");
+//         $("#img_url").removeAttr("disabled");
+//         $("#img_url option").removeClass("hide");
+//         $("#img_url option").not($("#img_url option."+parentBrandName)).addClass("hide");
+
+//     }
+//     else
+//     {
+//         $("#img_url option").removeAttr("selected");
+//         $("#img_url").attr("disabled","true");
+//         $("#img_url option").removeClass("hide");
+//     }
+// });
+
+// $("#cv_name").on('change',function()
+// {
+//     var parentBrand = $(this).val();
+//     console.log('parentBrand'+parentBrand+"---"+$("#img_url option").hasClass(parentBrand));
+
+//     if($("#img_url option").hasClass(parentBrand))
+//         {
+//             $("#img_url option").removeAttr("selected");
+//             $("#img_url").removeAttr("disabled");
+//             $("#img_url option").removeClass("hide");
+//             $("#img_url option").not($("#img_url option."+parentBrand)).addClass("hide");
+//         }
+//         else
+//             {
+//                 $("#img_url option").removeAttr("selected");
+//                 $("#img_url").attr("disabled","true");
+//                 $("#img_url option").removeClass("hide");
+//             }
+
+// });
+
+// $(document).ready(function() {
+//     $('#cv_name').change(function() {
+//         var selectedBrand = $(this).val();
+//         if (selectedBrand !== '0') {
+//             $('#img_url').prop('disabled', false);
+
+//             $('#img_url').empty().append('<option value="0">Select Logo</option>');
+
+//             @foreach ($brand_data as $item)
+//                 if ("{{ base64_encode($item->brand_name) }}" === selectedBrand) {
+//                     $('#img_url').append(`<option value="{{ $item->brand_img_url }}">{{ $item->brand_img_url }}</option>`);
+//                 }
+//             @endforeach
+//         } else {
+//             $('#img_url').prop('disabled', true).val('0');
+//         }
+//     });
+// });
+
+
+
+/***new */
+var parentBrandName = $('#cv_id').val();
+
+if (parentBrandName > 0) {
+    console.log('parentBrandName' + parentBrandName + " --- " + $("#img_url option").hasClass(parentBrandName));
+
+    if ($("#img_url option").hasClass(parentBrandName)) {
+        //$("#sub_industry_name option").removeAttr("selected");
+        $("#img_url").removeAttr("disabled");
+        $("#img_url option").removeClass("hide");
+        $("#img_url option").not($("#img_url option." + parentBrandName)).addClass("hide");
+        $("#img_url option[id='showHideSubInOptionId']").removeClass("hide");
+    } else {
+        $("#img_url option").removeAttr("selected");
+        $("#img_url").attr("disabled", "true");
+        $("#img_url option").addClass("hide");
+    }
+}
+
+$("#cv_name").on('change', function() {
+    var parentBrandName = $("#cv_name").val();
+    console.log('parentBrandName' + parentBrandName + " --- " + $("#img_url option").hasClass(parentBrandName));
+
+    if ($("#img_url option").hasClass(parentBrandName)) {
+        $("#img_url option").removeAttr("selected");
+        $("#img_url").removeAttr("disabled");
+        $("#img_url option").removeClass("hide");
+        $("#img_url option").not($("#img_url option." + parentBrandName)).addClass("hide");
+    } else {
+        $("#img_url option").removeAttr("selected");
+        $("#img_url").attr("disabled", "true");
+        $("#img_url option").removeClass("hide");
+    }
+});

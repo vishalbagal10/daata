@@ -1,0 +1,8 @@
+
+*** Why we provide the link with taxonomy option
+	--> pehale hum radar mai brand create kar sakate the par ab sara control taxonomy ke pass hai --> aab hume sare brands taxonomy hi provide kar raha hai
+	--> link with taxonomy check karata hai ki already created brand naye brands ke sath map hai ya nhi based on brand_id
+	--> agar link nahi hoga to hum use taxomony ke brand ke sath link kar sakate hai
+
+	--> hume naya brand chahiye to num taxonomy ko request kar shakate hai new brand ke liye 
+	--> taxonomy hume mail send karega ki request brand created or not

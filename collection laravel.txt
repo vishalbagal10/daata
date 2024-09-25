@@ -1,0 +1,88 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+
+class collectionController extends Controller
+{
+    public function test(){
+        // $items = collect([1,2,3,4]);
+        // $items = new collection(["vishal","ram","kiran"]);
+        // // $result = $items->map(function($item){
+        // //     return strtoupper($item);
+        // // });
+        // // dd($result);
+
+        // dd($items->sort());
+
+
+        // $fruits = collect([
+        //     ["name"=>"apple","price"=>145,"sales"=>15],
+        //     ["name"=>"banana","price"=>188,"sales"=>45],
+        //     ["name"=>"orange","price"=>90,"sales"=>8],
+        // ]);
+        // // $result = $fruits->sortBy('price');
+        // $result = $fruits->where('sales','>',30 );
+        // dd($result);
+
+        // $brand_data = DB::table('tbl_brands')->where('is_active','=','0')->get();
+        // $result = $brand_data->map(function($item){
+        //     return strtoupper($item->brand_name);
+        // });
+        // dd($result->all());
+
+        // dd($brand_data->pluck('b_id'));
+
+
+        // $collection = collect([1,2,4,5,6,8,5,4]);
+        // $result = $collection->implode(',');
+        // dd($result);
+
+
+        // $collection = collect([1,2,3,4,5,6,78,8]);
+        // $result = $collection->filter(function($item){
+        //     return $item%2!=0;
+        // });
+        // dd($result->all());
+
+        // $brand_data = DB::table('tbl_brands')->where('is_active','=','0')->get();
+        // foreach($brand_data->take(10) as $user){
+        //     echo $user->brand_name;
+        //     echo "<br>";
+        // }
+        // dd($brand_data);
+
+
+        // $collection = collect([1,2,3,4,5,6,78,8]);
+        // $result = $collection->transform(function($item){
+        //     return $item*2;
+        // });
+        // dd($result->all());
+
+
+        // $brand_data = DB::table('tbl_brands')->where('is_active','=','0')->get();
+        // $result = $brand_data->map(function($item){
+        //     return strtoupper($item->brand_name);
+        // });
+        // dd($result->all());
+        // $result = $users->transform(function($user){
+        //     $user['name'] = strtoupper($user['name']);
+        //     return $user;
+        // });
+
+        $users = collect([
+            ['name' => 'Alice', 'email' => 'alice@example.com'],
+            ['name' => 'Bob', 'email' => 'bob@example.com'],
+            ['name' => 'Charlie', 'email' => 'charlie@example.com'],
+        ]);
+
+        $result = $users->transform(function($user){
+
+            return strtoupper($user['name']);
+        });
+        dd($result->all());
+    }
+}

@@ -1,0 +1,19 @@
+**** link and don't link in edit
+	***Link
+	case 1) already created brand that is mapping not done
+	   --> click on edit option
+	   --> link with taxonomy
+	   --> select brand
+	   --> click on save as draft button after that popup is opend to select other years for that cv
+	   --> if we click on any year and click on link button that time for selected year only change brand_id, industry_id, sub_industry_id
+	   --> and for main brand change all properties
+	   
+	***Dont't Link
+	case 1) already created brand that is mapping not done
+	   --> click on edit option
+	   --> link with taxonomy
+	   --> select brand
+	   --> click on save as draft button after that popup is opend to and after that if we click on don't link button that time all info for main selected brand will be changed
+           
+
+*** to render php code in html we use {{}} 

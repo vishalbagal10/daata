@@ -1,0 +1,34 @@
+*** changes in custom.js for channel section
+sarthak@bitfumes.com --> for laravel more information
+
+
+*** first() -> first() method fetch single value from database -> first hold the single object
+	--> eg-> 
+	stdClass Object
+	(
+    	    [cv_id] => 2274
+    	    [brand_id] => 72
+    
+	)
+
+
+*** get()   -> get() method fetch collection of records from the database -> get() method holds the collection of object -> array of object
+	-->eg-> 
+Illuminate\Support\Collection Object
+(
+    [items:protected] => Array
+        (
+            [0] => stdClass Object
+                (
+                    [cv_id] => 2274
+                    [brand_id] => 72
+                    [type] => brand
+                    [status] => 1
+                )
+
+        )
+
+)
+
+
+onClick="limitChecker('custInput', 'ychn_name_{{$b16key}}')" onchange="limitChecker('custInput', 'ychn_name_{{$b16key}}')" onblur="limitChecker('custInput', 'ychn_name_{{$b16key}}')" onfocus="limitChecker('custInput', 'ychn_name_{{$b16key}}')"

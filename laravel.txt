@@ -1,0 +1,45 @@
+* Flow OF Sonic Radar Project
+   1) Login
+	--> LoginController -- lgoinForm -- view(backend.views.login_form)
+	--> view(backend.views.login_form) through this content of this page is shared to backend.layouts.auth_layout-- after that lolgin page is diaplayed
+	--> after that all login page info is route to the {{route('checklogin')}}
+	--> thorugh thiis {{route('checklogin')}} it passed to LoginController -- authenticateLgoin
+
+LoggedUserType == 1 --> admin
+LoggedUserType == 2 --> client
+
+'is_active', 0 --> acessible
+'is_active', 1 --> not acessible
+
+where('status', 1) --> published data
+where('status', 0) --> Unpublished data
+
+admin all access to create client account but password is set by the user itself
+
+
+
+
+
+
+
+
+***yeild statement
+	--> yeild statement is basically used to make section
+	--> used to display the contents of given section
+***Three types of controllers
+	--> basic controller -- In this we create controller manualy according to our requirement
+		** Command  -- php artisan make:controller ControllerName
+	--> singleActionController -- In case there is case where we want to handle singlt request that time we use SingleActionController
+		**Command	   -- php artisan make:controller ControllerName --invokable
+
+	--> Resource Controller -- CRUD --All operations related to CRUD performs under the Resources Controller
+	        ** Command         -- php artisan make:controller ControllerName --resource
+**Components
+	--> in components we kept the code and reuse them
+
+
+
+*** @if(Session::has('success'))
+        {{ Session::get('success') }}
+    @endif 
+	--> it checks the is success variable is present or not if present then inside if block it will retrive all values stored inside the success variable

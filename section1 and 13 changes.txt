@@ -1,0 +1,20 @@
+Section 1)
+--> 1) create new table which is tbl_request_brand
+	--> r_id - bigint(20) - AUTO_INCREMENT
+	--> brand_name - varchar(255) - utf8mb4_general_ci 
+	--> request_msg - varchar(512) - utf8mb4_general_ci - default(NULL)
+	--> request_by - bigint(20)
+	--> is_active - int(11) - default(0)
+	--> c_date - datetime - default(current_timestamp())	
+	--> u_date - timestamp - default(NULL) - ON UPDATE CURRENT_TIMESTAMP()	
+--> 2) create get_brand_data api to get brand data
+--> 3) craete taxonomy folder inside htdocs - from where we get the brand images
+--> 4) create new database which is taxonomy - inside taxonomy create table tbl_brands from where we fetch brand data
+
+section 13)
+--> 1) create new table which is tbl_cv_block_13sv_data
+
+
+*** in tbl_cvs added new column that is brand_id after cv_id
+	--> Type: bigint(20)
+	--> Default: NULL

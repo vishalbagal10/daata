@@ -1,0 +1,13 @@
+*** 02_aug_2024
+	--> make update on savedraftbutton and edit image after rendering
+	--> 
+*** task completed till 2_aug_2024
+	--> language added
+	--> ork on section first for 
+		--> brand requesting
+		--> getting brand data from taxonomy
+	--> edit
+		--> add mapping with taxonomy
+		--> work on save draft button
+		--> 
+*** work on frontend for displaying taxonomy mapped image

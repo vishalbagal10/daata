@@ -1,0 +1,36 @@
+PHP Multidimensional Array Searching (Find key by specific value)
+
+transform pagination data in laravel
+
+$cv_data = DB::table('tbl_best_in_audio_brands')
+    ->where('cv_year', '=', base64_decode($year))
+    ->where('is_active', '=', 0)
+    ->orderBy($order_by_col, $order_by_type)
+    ->paginate(20);
+
+$cv_img_data_arr = [];
+foreach ($cv_data as $cvdata) {
+    // Fetch cv_logo and brand_id in a single query
+    $cv_logo_data = DB::table('tbl_cvs')
+        ->where('cv_id', '=', $cvdata->cv_id)
+        ->select('cv_logo', 'brand_id')
+        ->first();
+
+    // Check if cv_logo_data is not null
+    if ($cv_logo_data) {
+        // Store cv_logo and brand_id separately
+        $cv_img_data_arr[$cvdata->cv_id] = [
+            'cv_logo' => $cv_logo_data->cv_logo,
+            'brand_id' => $cv_logo_data->brand_id
+        ];
+    } else {
+        // Store empty values if no data is found
+        $cv_img_data_arr[$cvdata->cv_id] = [
+            'cv_logo' => '',
+            'brand_id' => ''
+        ];
+    }
+}
+
+// Get total number of results
+$total_cvs = $cv_data->total();

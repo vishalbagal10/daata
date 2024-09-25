@@ -1,0 +1,5 @@
+$('#text').removeClass('class_name');
+
+$('#text').removeAttr('name');
+
+$('#text').addClass("hide");

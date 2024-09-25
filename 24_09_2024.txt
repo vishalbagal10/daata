@@ -1,0 +1,81 @@
+i want to create online bus booking system one first page i want options for selection destination, based on selected destination price will displayed on page, after click on select seat button it redirect to next page where i have options to select seat for seat i have condition like When booking a seat, users will follow these steps:
+1. Select a Destination: The user picks the start and end destinations from the list
+of 4 options.
+2. Choose a Seat: The user selects a Single or Double seat from the visual layout
+of the bus.
+3. Price Display: The system automatically calculates and shows the total cost
+based on the selected route and seat type.
+4. Confirm Booking: The user confirms their booking. The system then updates
+the seat status to Booked, making it unavailable for others.
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bus Booking</title>
+</head>
+<body>
+    <h1>Online Bus Booking System</h1>
+    <form action="{{ route('booking.select_seats') }}" method="POST">
+        @csrf
+        <label for="route">Select Start Point:</label>
+        <select name="route_id" id="route">
+            <option value="">Select starting Destination</option>
+            @foreach ($routes as $route)
+                <option value="{{ $route->id }}">{{ $route->start_location }} to {{ $route->end_location }}</option>
+            @endforeach
+        </select><br><br>
+        <label for="route">Select End Point:</label>
+        <select name="route_id" id="route">
+            <option value="">Select end Destination</option>
+            @foreach ($routes as $route)
+                <option value="{{ $route->id }}">{{ $route->start_location }} to {{ $route->end_location }}</option>
+            @endforeach
+        </select><br><br>
+        <button type="submit">Select Seat</button>
+    </form>
+</body>
+</html>
+
+
+
+<?php
+// Spotify API Endpoint URL
+$url = 'https://api-partner.spotify.com/ads/v1/insights/listener';
+
+// Prepare the data for POST request (filters)
+$data = [
+    'age_groups' => ['18-24', '25-34'], // Add more age ranges as needed
+    'gender' => 'FEMALE',
+    'country' => 'US',
+];
+
+// Convert the data to JSON
+$postData = json_encode($data);
+
+// Initialize cURL session
+$ch = curl_init($url);
+
+// Set cURL options
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // Return response as a string
+curl_setopt($ch, CURLOPT_POST, true); // Specify this is a POST request
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Content-Type: application/json', // Specify the content type
+    'Authorization: Bearer YOUR_ACCESS_TOKEN', // Add your OAuth token here
+]);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $postData); // Attach the post data
+
+// Execute the cURL request and get the response
+$response = curl_exec($ch);
+
+// Check for errors
+if (curl_errno($ch)) {
+    echo 'cURL error: ' . curl_error($ch);
+} else {
+    // Output the response from Spotify API
+    echo $response;
+}
+
+// Close the cURL session
+curl_close($ch);

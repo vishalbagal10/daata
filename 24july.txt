@@ -1,0 +1,42 @@
+$recently_added_cv = DB::table('tbl_cvs')
+    ->where('status', '=', 1)
+    ->where('is_active', '=', 0)
+    ->orderBy('created_at', 'DESC')
+    ->limit(30)
+    ->get();
+
+$latest_snapshots_id_arr = [];
+foreach ($recently_added_cv as $recently_added_cv_data) {
+    if ($recently_added_cv_data->brand_id != 0 && 
+        $recently_added_cv_data->brand_id != '0' && 
+        $recently_added_cv_data->brand_id != NULL && 
+        $recently_added_cv_data->brand_id != '') {
+        
+        $latest_snapshots_id_arr[] = $recently_added_cv_data->brand_id;
+    }
+}
+
+if (!empty($latest_snapshots_id_arr)) {
+    $get_taxonomy_brands_data = json_decode(
+        GenerateAuthToken::getTaxonomyBrandsData(implode(',', $latest_snapshots_id_arr))
+    );
+    
+    if ($get_taxonomy_brands_data->msg == 0) {
+        $recently_added_cv = $recently_added_cv->transform(function($item) use ($get_taxonomy_brands_data) {
+            foreach ($get_taxonomy_brands_data->data as $brand_data) {
+                if ($item->brand_id == $brand_data->brand_id) {
+                    $item->brand_id = $brand_data->brand_id;
+                    $item->cv_name = $brand_data->brand_name;
+                    $item->industry_id = $brand_data->industry_id;
+                    $item->sub_industry_id = $brand_data->sub_industry_id;
+                    $item->cv_logo = $brand_data->img_name;
+                    $item->cv_banner_desktop = $brand_data->img_name;
+                    $item->cv_banner_ipad = $brand_data->img_name;
+                    $item->cv_banner_mobile = $brand_data->img_name;
+                    break;
+                }
+            }
+            return $item;
+        });
+    }
+}

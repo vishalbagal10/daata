@@ -1,0 +1,48 @@
+ LoginController --> route(brand-cvs) --> CvsController (listBrandCvs) --> views(brand_cv_list) --> route(add-cv) --> CvsController(addCv) --> views(add_brand_cv) -->route('save.brandcv') 
+    --> CvsController(saveBrandCv)
+  
+
+
+*** insertOrIgnore -->insert the data into database and if feilds are already present in the database it ignore it and insert other data
+
+
+
+
+
+ Base64 encoding is a method of converting binary data into ASCII text format,
+
+split() method to split the string stored in $request->parent_cv_name into an array.
+
+*****           $request->parent_cv_name: This retrieves the string "John#_#Doe#_#30#_#New York" from $request->parent_cv_name.
+
+               Str::of($request->parent_cv_name): This creates a Str object from the string "John#_#Doe#_#30#_#New York".
+
+               split('/#_#/'): This splits the string into an array using the delimiter /#_#/. So, the string will be split at every occurrence of #_#. After splitting, the resulting array will be:
+               
+[
+    "John",
+    "Doe",
+    "30",
+    "New York"
+]
+
+
+*****          The explode() function breaks a string into an array.
+
+
+HW--> addcv che tables che photo kadhane
+
+
+****
+indexOf("welcome") --> it check that this string is present or not in a particular location
+	--> OR --> it check particular url is present in a URL or not
+
+****
+var currentURL = window.location.href; --> window.location.href property returns the URL of the current page.
+
+Example
+
+
+
+processing: true: Indicates that DataTables should show a processing indicator during data loading.
+serverSide: true: Specifies that server-side processing should be used. This means that DataTables will make requests to the server for data, which is suitable for handling large datasets.

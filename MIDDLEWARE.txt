@@ -1,0 +1,7 @@
+**** MiddleWare --> it is the brige between request and response
+** Command to make middleware -->   php artisan make:middleware <middleware-name>
+--> Middleware can be registered at app/http/kernel.php
+--> two types-> 1) global and routemiddleware
+1)Global middleware --> it run on every http request
+2) RouteMiddleware -->  it will be assigned to specific route
+

@@ -1,0 +1,118 @@
+*** some topics that is very important and must have the knowlege of this parts
+1) API
+2) AJAX
+3) DATABATABLES 
+4) helpers
+5) service container and service providers
+6) dependency injection
+7) packages
+8) custom packages like fselect
+9) 
+
+
+*** eloquent ORM -object relational mapping 
+- it is used to intereact with database without writing sql quries
+
+**sqlQuery()
+- it provides the interface to run and write sql query
+
+***What is the templating engine used in Laravel?
+
+*** Service Container
+- it is a space to manage dependencies and perform dependency injection.
+
+
+*** Service provider
+- it provides the services eg->cache,email
+- service providers define how classes and services should be registered and initialized within the container
+
+*** Dependency Injection
+-  when one class apne constructor method ke through dusare class ke object ko accept karta hai use dependency injection kahate hai
+
+
+
+
+
+
+
+
+
+
+$arr = array(2,5,1,7,4);
+for($i = 0; $i < count($arr); $i++ ) {
+ for($j = 0; $j < count($arr)-1; $j++) {
+ if($arr[$j+1] < $arr[$j]){
+ $temp = $arr[$j+1];
+ $arr[$j+1] = $arr[$j];
+ $arr[$j] = $temp;
+ }
+ }
+}
+print_r($arr);
+
+
+
+$arr = array(111,222,333,444); i have this array and want this ouput 111-1.2.3,222-4.5.6,333-7.8.9,444-10.11.12
+
+
+select * from employee order by desc limit 1 offset 2;
+select max(salary) from employee where salary < select max(salary) from employee;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

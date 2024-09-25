@@ -1,0 +1,9 @@
+*** addClass()-
+	-->$('p').addClass('newClass').removeClass('oldClass');
+
+*** attr() -
+	--> eg-> <img id="greatphoto" src="brush-seller.jpg" alt="brush seller">
+	-->$('#greatphoto').attr('alt','Beijing Brush Seller');
+	-->$('#greatphoto').attr('title','Photo by Kelly clark');
+
+--> $('div').text($('img').attr('alt'));

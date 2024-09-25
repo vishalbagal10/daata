@@ -1,0 +1,40 @@
+$called_from = 'cv';
+$cv_data = DB::table('tbl_cvs')->where('cv_id', '=', base64_decode($cvid))->first();
+
+if ($cv_data) {
+    // Fetch data from API
+    if ($cv_data->brand_id != 0 && $cv_data->brand_id != NULL) {
+        $get_taxonomy_brands_data = json_decode($this->getTaxonomyBrandsData($cv_data->brand_id));
+        
+        // Check if API call was successful
+        if ($get_taxonomy_brands_data && $get_taxonomy_brands_data->msg == 0) {
+            // Transform $cv_data using the retrieved API data
+            $cv_data = collect($cv_data); // Convert $cv_data to a collection
+            
+            $updatedData = $cv_data->transform(function ($item) use ($get_taxonomy_brands_data) {
+                $item->brand_name = $get_taxonomy_brands_data->brand_name;
+                $item->id = $get_taxonomy_brands_data->id;
+                $item->industry_id = $get_taxonomy_brands_data->industry_id;
+                $item->sub_industry_id = $get_taxonomy_brands_data->sub_industry_id;
+                $item->brand_img = $get_taxonomy_brands_data->brand_img;
+                
+                return $item;
+            });
+
+            // Update the database record
+            DB::table('tbl_cvs')
+                ->where('cv_id', $cv_data->get('cv_id'))
+                ->update([
+                    'brand_name' => $updatedData->get('brand_name'),
+                    'id' => $updatedData->get('id'),
+                    'industry_id' => $updatedData->get('industry_id'),
+                    'sub_industry_id' => $updatedData->get('sub_industry_id'),
+                    'brand_img' => $updatedData->get('brand_img')
+                ]);
+
+            // Print updated $cv_data for debugging
+            print_r($updatedData);
+            exit;
+        }
+    }
+}

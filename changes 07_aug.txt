@@ -1,0 +1,21 @@
+make changes in CvsController and edit_brand_cv.blade.php
+edit,add,duplicate views
+
+
+
+
+
+1601
+119
+51
+60 Ryanair coke
+
+77-Salesforce -2020-metlife -2019,2021,2022
+77-Salesforce -2022-hdfc-2021(409)
+
+89-activa-2020-tata-2021
+
+71 - accenture-2020-kfc-Accenture 2021	
+2167-obi-2024
+564-Campbell's	-2021
+178-unicredit-2020-coke
